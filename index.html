@@ -13,7 +13,7 @@
 
     <script defer src="js/script.js"></script>
 
-    <title>MarketShift &mdash; The place for deals!</title>
+    <title>MarketShift &mdash; The place for amazing deals!</title>
 </head>
 
 <body>
@@ -45,38 +45,9 @@
                 </div>
             </div>
         </section>
-        <section class="section-products">
-            <div class="product-card">
-                <div class="product-image"></div>
-                <div class="product-info">
-                    <p>Item Name</p>
-                    <p>Price</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image"></div>
-                <div class="product-info">
-                    <p>Item Name</p>
-                    <p>Price</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image"></div>
-                <div class="product-info">
-                    <p>Item Name</p>
-                    <p>Price</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card">
-                <div class="product-image"></div>
-                <div class="product-info">
-                    <p>Item Name</p>
-                    <p>Price</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
+        <section class="section-items">
+            <div id="itemContainer" class="item-container">
+
             </div>
         </section>
     </main>
@@ -128,18 +99,9 @@
         <div class="popup-content cart-content">
             <h2>Shopping Cart</h2>
             <div class="cart-items">
-                <!-- Cart items will be dynamically inserted here -->
-                <div class="cart-item">
-                    <div class="cart-item-image"></div>
-                    <div class="cart-item-info">
-                        <p>Item Name:</p>
-                        <p>Price:</p>
-                        <p>Shipping:</p>
-                        <button class="remove-item cart-remove-item">Remove</button>
-                    </div>
-                </div>
+
             </div>
-            <p>Subtotal:</p>
+            <p class="subtotal">Subtotal: $0.00</p>
             <button type="button" class="popup-close cart-close">X</button>
             <button type="button" class="back-to-shopping cart-back-to-shopping">Back to Shopping</button>
             <button type="button" class="checkout-btn">Checkout</button>
