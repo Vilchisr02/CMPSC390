@@ -277,6 +277,27 @@ if (window.location.pathname.includes("checkout.html")) {
     }
 }
 
+// Go to SignUp
+document.getElementById("goToSignUp").addEventListener("click", function(event) {
+    event.preventDefault();
+    document.getElementById("signUpPopup").style.display = "flex";
+    document.getElementById("signInPopup").style.display = "none";
+});
+
+document.querySelector(".sign-up-close").addEventListener("click", function() {
+    document.getElementById("signUpPopup").style.display = "none";
+});
+
+document.querySelector(".sign-in-close").addEventListener("click", function() {
+    document.getElementById("signInPopup").style.display = "none";
+});
+
+window.addEventListener("click", function(event) {
+    if (event.target === document.getElementById("signInPopup")) {
+        document.getElementById("signInPopup").style.display = "none";
+    }
+});
+
 // Popup Controls
 [signUpBtn, signInBtn, cartBtn].forEach((btn, idx) => {
     if (btn) {
