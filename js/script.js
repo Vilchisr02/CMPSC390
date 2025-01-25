@@ -34,6 +34,12 @@ const items = [
     { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "phone.jpg" },
     { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "headphones.jpg" },
     { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "camera.jpg" },
+    { id: "item5", name: "Sneakers", price: 99.99, shipping: 5.00, image: "sneakers.jpg" },
+    { id: "item6", name: "Book", price: 9.99, shipping: 3.00, image: "book.jpg" },
+    { id: "item7", name: "Game Console", price: 499.99, shipping: 20.00, image: "gameconsole.jpg" },
+    { id: "item8", name: "4K TV", price: 999.99, shipping: 20.00, image: "4ktv.jpg" },
+    { id: "item9", name: "Rug", price: 4.99, shipping: 3.00, image: "rug.jpg" },
+    { id: "item10", name: "Table", price: 49.99, shipping: 15.00, image: "table.jpg" },
 ];
 
 // Render Product Page

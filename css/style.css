@@ -9,7 +9,6 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     height: 9.6rem;
     padding: 0 4.8rem;
     position: relative;
@@ -383,152 +382,191 @@ button:hover {
 
 .product-page {
     display: flex;
-    justify-content: space-between;
-    margin: 20px;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .product-images {
-    width: 60%;
+    flex: 1 1 60%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
 }
 
 .product-images img {
     width: 100%;
     height: auto;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .thumbnail-images {
     display: flex;
-    gap: 10px;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .thumbnail {
-    width: 30%;
-    height: auto;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
     cursor: pointer;
     border: 2px solid #ddd;
-    border-radius: 5px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
 .thumbnail:hover {
     transform: scale(1.05);
+    border-color: #007bff;
 }
 
 .product-details {
-    width: 35%;
-    padding: 20px;
-    background-color: #f8f8f8;
+    flex: 1 1 35%;
+    padding: 2rem;
+    background-color: #f9f9f9;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .product-details h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
 }
 
 .product-details p {
     font-size: 1.1rem;
-    margin-bottom: 10px;
+    color: #555;
+    margin-bottom: 1rem;
 }
 
-.product-details {
-    width: 35%;
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.product-details h2 {
+.product-details .price {
     font-size: 1.5rem;
-    margin-bottom: 10px;
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
 }
 
-.product-details p {
+.product-details .shipping {
     font-size: 1.1rem;
-    margin-bottom: 10px;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.product-details button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-details button:hover {
+    background-color: #0056b3;
 }
 
 /****************************************************************************************************************/
 /* CHECKOUT PAGE (checkout.html) */
 /****************************************************************************************************************/
 
-.checkout-section {
-    margin-top: 10rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    margin-bottom: 5rem;
+.checkout-section,
+.ship-to-section,
+.order-section {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-section h2,
+.ship-to-section h2,
+.order-section h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+.checkout-cart-items,
+.ship-to-details,
+.order-summary {
+    margin-top: 1rem;
 }
 
 .checkout-cart-items {
-    flex: 1 1 calc(50% - 1rem);
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
-    max-width: 800px;
-}
-
-.ship-to-section {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
-    width: 100%;
-    margin-bottom: 5rem;
+}
+
+.checkout-cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.checkout-cart-item-info {
+    flex: 1;
+}
+
+.checkout-cart-item-info p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #555;
 }
 
 .ship-to-details {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
     background-color: #f9f9f9;
-    max-width: 800px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
 }
 
 .ship-to-details p {
     margin: 0.5rem 0;
     font-size: 1rem;
-}
-
-.order-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
+    color: #555;
 }
 
 .order-summary {
-    flex: 1 1 calc(50% - 1rem);
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
     background-color: #f9f9f9;
-    max-width: 800px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.order-summary p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #555;
 }
 
 .confirm-order-btn {
-    width: auto;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    color: #fff;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
     background-color: #007bff;
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1.1rem;
     cursor: pointer;
-    margin-top: 1rem;
     transition: background-color 0.3s ease;
 }
 
@@ -536,19 +574,130 @@ button:hover {
     background-color: #0056b3;
 }
 
-.close-popup-btn {
-    margin-top: 20px;
-    padding: 0.75rem;
+.order-confirmation-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.order-confirmation-popup.show {
+    display: flex;
+}
+
+.order-confirmation-popup .popup-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
     text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.order-confirmation-popup .popup-content p {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.close-popup-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .close-popup-btn:hover {
     background-color: #0056b3;
+}
+
+
+/****************************************************************************************************************/
+/* ABOUT PAGE (about.html) */
+/****************************************************************************************************************/
+
+/* About Page Styles */
+.about-section {
+    padding: 4rem 2rem;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.about-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-heading {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.about-description {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.about-mission,
+.about-values,
+.about-team,
+.about-cta {
+    margin-bottom: 2.5rem;
+}
+
+.about-mission h2,
+.about-values h2,
+.about-team h2,
+.about-cta h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.about-values ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.about-values li {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.about-values li::before {
+    content: "•";
+    color: #007bff;
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0;
+    top: -0.2rem;
+}
+
+.about-cta .cta-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.about-cta .cta-link:hover {
+    color: #0056b3;
 }
