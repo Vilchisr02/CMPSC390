@@ -156,11 +156,12 @@ function updateCartDisplay() {
         subtotalElement.textContent = `Subtotal: $${(totalPrice + totalShipping).toFixed(2)}`;
     }
 
-    cartItemsContainer.addEventListener("click", (e) => {
-        if (e.target.classList.contains("remove-item")) {
-            const itemIndex = parseInt(e.target.getAttribute("data-index"), 10);
+    const removeButtons = cartItemsContainer.querySelectorAll(".remove-item");
+    removeButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const itemIndex = parseInt(button.getAttribute("data-index"), 10);
             removeItemFromCart(itemIndex);
-        }
+        });
     });
 }
 
