@@ -8,6 +8,7 @@ const signInPopup = document.getElementById("signInPopup");
 const cartPopup = document.getElementById("cartPopup");
 const backToShopping = document.querySelector(".back-to-shopping");
 const cartItemsContainer = document.querySelector(".cart-items");
+const checkoutBtn = document.querySelector(".checkout-btn");
 
 // Load/Save Cart Functions
 function saveCartToLocalStorage() {
@@ -62,6 +63,10 @@ if (window.location.pathname.includes("product.html")) {
 
         document.getElementById("addToCartBtn").addEventListener("click", () => {
             addItemToCart(selectedItem);
+        });
+
+        document.getElementById("buyNowBtn").addEventListener("click", () => {
+            redirectToCheckout([selectedItem]);
         });
     } else if (productPage) {
         productPage.innerHTML = "<p>Product not found</p>";
@@ -189,4 +194,15 @@ closeButtons.forEach(button => {
 
 if (backToShopping) {
     backToShopping.addEventListener("click", () => cartPopup.style.display = "none");
+}
+
+if(checkoutBtn){
+    checkoutBtn.addEventListener("click", () => {
+        if (cart.length === 0) {
+            alert("You cannot checkout with an empty cart!");
+        } else {
+            alert("Proceeding to payment...");
+            window.location.href = "checkout.html";
+        }
+    });
 }
