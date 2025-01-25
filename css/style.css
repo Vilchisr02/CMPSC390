@@ -1,3 +1,10 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -80,7 +87,7 @@ header {
     text-align: center;
 }
 
-.hero-primary {
+.hero-primary{
     font-size: 4rem;
     margin-bottom: 2rem;
 }
@@ -146,6 +153,15 @@ header {
     font-size: 1.4rem;
 }
 
+.item-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.item-link:hover {
+    text-decoration: none;
+}
+
 .add-to-cart {
     margin-top: 12px;
     padding: 10px 16px;
@@ -191,6 +207,8 @@ footer {
     position: sticky;
     bottom: 0;
     width: 100%;
+    margin-top: auto;
+    position: relative;
 }
 
 /**************************/
@@ -226,9 +244,9 @@ footer {
     color: #333;
 }
 
-.sign-in-content p {
-    margin-top: 1rem;
-    text-align: center;
+.sign-in-content p{
+   margin-top: 1rem;
+   text-align: center;
 }
 
 .subtotal {
@@ -255,7 +273,7 @@ footer {
     outline: none;
 }
 
-form label {
+form label{
     display: block;
     margin-bottom: 0.5rem;
     font-size: 1.4rem;
