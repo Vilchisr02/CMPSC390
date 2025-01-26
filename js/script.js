@@ -9,6 +9,7 @@ const cartPopup = document.getElementById("cartPopup");
 const backToShopping = document.querySelector(".back-to-shopping");
 const cartItemsContainer = document.querySelector(".cart-items");
 const checkoutBtn = document.querySelector(".checkout-btn");
+const closePopupBtn = document.querySelector(".close-popup-btn");
 
 // Load/Save Cart Functions
 function saveCartToLocalStorage() {
@@ -194,9 +195,8 @@ if (window.location.pathname.includes("checkout.html")) {
     if (checkoutCartContainer && orderSummaryContainer) {
         let totalPrice = 0;
         let totalShipping = 0;
-        const taxRate = 0.07; // Example tax rate (7%)
+        const taxRate = 0.07;
 
-        // Render cart items
         cart.forEach(item => {
             const cartItem = document.createElement("div");
             cartItem.classList.add("checkout-cart-item");
@@ -214,12 +214,10 @@ if (window.location.pathname.includes("checkout.html")) {
             totalShipping += item.shipping * item.quantity;
         });
 
-        // Calculate totals
         const subtotal = totalPrice + totalShipping;
         const tax = subtotal * taxRate;
         const total = subtotal + tax;
 
-        // Render order summary
         orderSummaryContainer.innerHTML = `
             <p><strong>Subtotal:</strong> $${subtotal.toFixed(2)}</p>
             <p><strong>Tax (7%):</strong> $${tax.toFixed(2)}</p>
@@ -227,12 +225,11 @@ if (window.location.pathname.includes("checkout.html")) {
         `;
     }
 
-    // Generate Expected Arrival Date
     function getExpectedArrivalDate() {
         const today = new Date();
         const arrivalDate = new Date(today);
-        arrivalDate.setDate(today.getDate() + 7); // Add 7 days for arrival
-        return arrivalDate.toLocaleDateString(); // Format as mm/dd/yyyy
+        arrivalDate.setDate(today.getDate() + 7);
+        return arrivalDate.toLocaleDateString();
     }
 
     // Show Order Confirmation Popup
@@ -243,16 +240,14 @@ if (window.location.pathname.includes("checkout.html")) {
             } else {
                 const arrivalDate = getExpectedArrivalDate();
 
-                // Check if elements are defined
                 if (orderConfirmationMessage) {
                     orderConfirmationMessage.textContent = `Order Confirmed! Expected Arrival: ${arrivalDate}`;
                 }
 
                 if (orderConfirmationPopup) {
-                    orderConfirmationPopup.classList.add("show"); // Show the popup
+                    orderConfirmationPopup.classList.add("show");
                 }
 
-                // Clear cart after confirmation
                 cart.length = 0;
                 saveCartToLocalStorage();
             }
@@ -267,7 +262,6 @@ if (window.location.pathname.includes("checkout.html")) {
                 orderConfirmationPopup.classList.remove("show");
             }
 
-            // Clear cart contents from DOM
             checkoutCartContainer.innerHTML = '';
 
             orderSummaryContainer.innerHTML = `
@@ -276,11 +270,63 @@ if (window.location.pathname.includes("checkout.html")) {
                 <p><strong>Total:</strong> $0.00</p>
             `;
 
-            // Empty the cart array and save it to localStorage
             cart.length = 0;
-            saveCartToLocalStorage(); // Assuming this function updates localStorage
+            saveCartToLocalStorage();
         });
     }
+}
+
+// Listing Feature
+if (window.location.pathname.includes("listing.html")){
+    const postListingBtn = document.querySelector('.post-listing-btn');
+    const itemNameInput = document.getElementById('itemName');
+    const itemPriceInput = document.getElementById('itemPrice');
+    const shippingCostInput = document.getElementById('shippingCost');
+    const shippingOptions = document.querySelectorAll('.shipping-option');
+    const listingPopup = document.getElementById('listingPopup');
+
+    let selectedShippingMethod = "";
+
+    shippingOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            this.classList.toggle('selected'); 
+
+            if (this.classList.contains('selected')) {
+                selectedShippingMethod = this.innerText;
+            } else {
+                selectedShippingMethod = "";
+            }
+
+            shippingOptions.forEach(opt => {
+                if (opt !== this) {
+                    opt.classList.remove('selected');
+                }
+            });
+        });
+    })
+
+    postListingBtn.addEventListener('click', function () {
+        const itemName = itemNameInput.value.trim();
+        const itemPrice = parseFloat(itemPriceInput.value.trim());
+        const shippingCost = parseFloat(shippingCostInput.value.trim());
+
+        if (!itemName || isNaN(itemPrice) || isNaN(shippingCost) || !selectedShippingMethod) {
+            alert("Please fill in all fields correctly!");
+                return;
+        }
+
+        listingPopup.style.display = 'flex';
+
+        itemNameInput.value = '';
+        itemPriceInput.value = '';
+        shippingCostInput.value = '';
+        shippingOptions.forEach(opt => opt.classList.remove('selected'));
+        selectedShippingMethod = "";
+    });
+    
+    closePopupBtn.addEventListener('click', function () {
+        listingPopup.style.display = 'none';
+    });
 }
 
 // Go to SignUp
