@@ -32,8 +32,32 @@
         </nav>
     </header>
 
-    <main>
+    <main class="listing-container">
+        <div class="listing-form">
+            <div class="image-upload">
+                <div class="image-placeholder"></div>
+            </div>
+            <div class="listing-details">
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" class="listing-input" placeholder="Enter item name">
 
+                <label for="itemPrice">Item Price:</label>
+                <input type="number" id="itemPrice" class="listing-input" placeholder="Enter item price">
+
+                <label>Shipping Method:</label>
+                <div class="shipping-method">
+                    <button class="shipping-option">USPS</button>
+                    <button class="shipping-option">FedEx</button>
+                    <button class="shipping-option">UPS</button>
+                    <button class="shipping-option">In-Person</button>
+                </div>
+
+                <label for="shippingCost">Shipping Cost:</label>
+                <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
+
+                <button class="post-listing-btn">Post Listing</button>
+            </div>
+        </div>
     </main>
 
     <!-- Pop-ups -->
@@ -86,6 +110,13 @@
             <button type="button" class="popup-close cart-close">X</button>
             <button type="button" class="back-to-shopping cart-back-to-shopping">Back to Shopping</button>
             <button type="button" class="checkout-btn">Checkout</button>
+        </div>
+    </div>
+
+    <div id="listingPopup" class="popup listing-popup">
+        <div class="popup-content listing-content">
+            <p>Your listing is confirmed!</p>
+            <button type="button" class="popup-close">Back to Shopping</button>
         </div>
     </div>
 </body>

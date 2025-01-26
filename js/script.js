@@ -42,52 +42,6 @@ const items = [
     { id: "item10", name: "Table", price: 49.99, shipping: 15.00, image: "table.jpg" },
 ];
 
-// Render Product Page
-if (window.location.pathname.includes("product.html")) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get("id");
-    const selectedItem = items.find(item => item.id === productId);
-
-    const productPage = document.getElementById("productPage");
-    if (selectedItem && productPage) {
-        productPage.innerHTML = `
-            <div class="product-images">
-                <img src="${selectedItem.image}" alt="${selectedItem.name}" class="main-image">
-                <div class="thumbnail-images">
-                    <!-- Optional Thumbnails -->
-                </div>
-            </div>
-            <div class="product-details">
-                <h2>${selectedItem.name}</h2>
-                <p><strong>Price:</strong> $${selectedItem.price.toFixed(2)}</p>
-                <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
-                <p><strong>Seller:</strong> Placeholder Seller</p>
-                <button id="buyNowBtn">Buy Now</button>
-                <button id="addToCartBtn">Add to Cart</button>
-            </div>
-        `;
-
-        document.getElementById("addToCartBtn").addEventListener("click", () => {
-            addItemToCart(selectedItem);
-        });
-
-        document.getElementById("buyNowBtn").addEventListener("click", () => {
-            addItemToCart(selectedItem);
-            redirectToCheckout([selectedItem]);
-        });
-
-        function redirectToCheckout(items) {
-            localStorage.setItem("checkoutItems", JSON.stringify(items));
-            window.location.href = "checkout.html";
-        }
-
-    } else if (productPage) {
-        productPage.innerHTML = "<p>Product not found</p>";
-    }
-} else {
-    renderItems();
-}
-
 // Render All Items
 function renderItems() {
     const itemContainer = document.getElementById("itemContainer");
@@ -181,6 +135,52 @@ function updateCartDisplay() {
             removeItemFromCart(itemIndex);
         });
     });
+}
+
+// Render Product Page
+if (window.location.pathname.includes("product.html")) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+    const selectedItem = items.find(item => item.id === productId);
+
+    const productPage = document.getElementById("productPage");
+    if (selectedItem && productPage) {
+        productPage.innerHTML = `
+            <div class="product-images">
+                <img src="${selectedItem.image}" alt="${selectedItem.name}" class="main-image">
+                <div class="thumbnail-images">
+                    <!-- Optional Thumbnails -->
+                </div>
+            </div>
+            <div class="product-details">
+                <h2>${selectedItem.name}</h2>
+                <p><strong>Price:</strong> $${selectedItem.price.toFixed(2)}</p>
+                <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
+                <p><strong>Seller:</strong> Placeholder Seller</p>
+                <button id="buyNowBtn">Buy Now</button>
+                <button id="addToCartBtn">Add to Cart</button>
+            </div>
+        `;
+
+        document.getElementById("addToCartBtn").addEventListener("click", () => {
+            addItemToCart(selectedItem);
+        });
+
+        document.getElementById("buyNowBtn").addEventListener("click", () => {
+            addItemToCart(selectedItem);
+            redirectToCheckout([selectedItem]);
+        });
+
+        function redirectToCheckout(items) {
+            localStorage.setItem("checkoutItems", JSON.stringify(items));
+            window.location.href = "checkout.html";
+        }
+
+    } else if (productPage) {
+        productPage.innerHTML = "<p>Product not found</p>";
+    }
+} else {
+    renderItems();
 }
 
 // Checkout Feature
