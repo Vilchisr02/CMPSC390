@@ -137,39 +137,18 @@
     margin: 0 auto;
 }
 
-.product-images {
+.product-image {
     flex: 1 1 60%;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.product-images img {
+.product-image img {
     width: 100%;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.thumbnail-images {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.thumbnail {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 2px solid #ddd;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.thumbnail:hover {
-    transform: scale(1.05);
-    border-color: #007bff;
 }
 
 .product-details {
@@ -225,6 +204,10 @@
 /****************************************************************************************************************/
 /* CHECKOUT PAGE (checkout.html) */
 /****************************************************************************************************************/
+
+.section-checkout {
+    min-height: 80vh;
+}
 
 .checkout-section,
 .ship-to-section,
@@ -455,11 +438,11 @@
 /****************************************************************************************************************/
 
 main.listing-container {
-    padding: 20px;
+    padding: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 82.9vh;
 }
 
 .listing-form {
@@ -552,6 +535,9 @@ label {
 /****************************************************************************************************************/
 /* ACCOUNT PAGE (account.html) */
 /****************************************************************************************************************/
+.section-account {
+    min-height: 80vh;
+}
 .account-details {
     display: flex;
     flex-direction: column;
@@ -560,7 +546,7 @@ label {
     padding: 2rem;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(1, 1, 1, 0.1);
 }
 
 .account-details label {

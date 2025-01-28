@@ -143,11 +143,8 @@ if (window.location.pathname.includes("product.html")) {
     const productPage = document.getElementById("productPage");
     if (selectedItem && productPage) {
         productPage.innerHTML = `
-            <div class="product-images">
-                <img src="${selectedItem.image}" alt="${selectedItem.name}" class="main-image">
-                <div class="thumbnail-images">
-                    <!-- Optional Thumbnails -->
-                </div>
+            <div class="product-image">
+                <img src="${selectedItem.image}" alt="${selectedItem.name}">
             </div>
             <div class="product-details">
                 <h2>${selectedItem.name}</h2>
