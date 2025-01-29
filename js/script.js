@@ -11,6 +11,14 @@ const cartItemsContainer = document.querySelector(".cart-items");
 const checkoutBtn = document.querySelector(".checkout-btn");
 const closePopupBtn = document.querySelector(".close-popup-btn");
 
+// Burger Menu Toggle
+const burgerMenu = document.getElementById('burgerMenu');
+const mainNav = document.querySelector('.main-nav');
+
+burgerMenu.addEventListener('click', () => {
+    mainNav.classList.toggle('active');
+});
+
 // Load/Save Cart Functions
 function saveCartToLocalStorage() {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -371,7 +379,14 @@ if (window.location.pathname.includes("account.html")) {
             showPopup(paymentDetailsPopup);
         });
     });
+
+    [setupPaymentPopup, viewPaymentPopup, paymentDetailsPopup].forEach(popup => {
+        popup.addEventListener("click", (e) => {
+            if (e.target === popup) hidePopup(popup);
+        });
+    });
 };
+
 
 // Go to SignUp
 document.getElementById("goToSignUp").addEventListener("click", function(event) {
