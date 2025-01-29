@@ -45,41 +45,69 @@
 }
 
 .item-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: none;
+    border-radius: 15px;
     padding: 20px;
-    width: 250px;
+    width: 280px;
     text-align: center;
     background-color: #fff;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
     position: relative;
+    background: linear-gradient(135deg, #f8f8f8, #fff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .item-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
 }
 
 .item-card img {
     width: 100%;
-    height: 180px;
+    height: 200px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
 }
 
 .item-card h3 {
-    font-size: 1.7rem;
-    margin: 10px 0;
+    font-size: 1.8rem;
+    margin: 12px 0;
     color: #333;
+    font-family: 'Readex Pro', sans-serif;
+    font-weight: 600;
 }
 
 .item-card p {
     margin: 8px 0;
     color: #777;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    font-family: 'Readex Pro', sans-serif;
+}
+
+.item-card .price-shipping {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    color: #333;
+    font-size: 1.5rem;
+    font-family: 'Readex Pro', sans-serif;
+}
+
+.item-card .price {
+    font-weight: bold;
+    font-size: 1.7rem;
+    color: #007bff;
+}
+
+.item-card .shipping {
+    font-size: 1.5rem;
+    color: #555;
 }
 
 .item-link {
@@ -87,25 +115,24 @@
     color: inherit;
 }
 
-.item-link:hover {
-    text-decoration: none;
-}
-
 .add-to-cart {
-    margin-top: 12px;
-    padding: 10px 16px;
+    margin-top: 15px;
+    padding: 12px 18px;
     border: none;
     background-color: #007bff;
     color: white;
-    border-radius: 5px;
-    font-size: 1.4rem;
+    border-radius: 30px;
+    font-size: 1.5rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-to-cart:hover {
     background-color: #0056b3;
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .item-card .price-shipping {
@@ -535,8 +562,9 @@ label {
 /* ACCOUNT PAGE (account.html) */
 /****************************************************************************************************************/
 .section-account {
-    min-height: 80vh;
+    margin-top: 6rem;
 }
+
 .account-details {
     display: flex;
     flex-direction: column;

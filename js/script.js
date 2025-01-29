@@ -39,12 +39,12 @@ updateCartDisplay();
 
 // Product Items
 const items = [
-    { id: "item1", name: "Laptop", price: 999.99, shipping: 15.00, image: "laptop.jpg" },
-    { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "phone.jpg" },
-    { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "headphones.jpg" },
-    { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "camera.jpg" },
-    { id: "item5", name: "Game Console", price: 499.99, shipping: 20.00, image: "gameconsole.jpg" },
-    { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "4ktv.jpg" },
+    { id: "item1", name: "Laptop", price: 999.99, shipping: 15.00, image: "/assets/laptop.jpg" },
+    { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "/assets/phone.jpg" },
+    { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "/assets/headphones.jpg" },
+    { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "/assets/camera.jpg" },
+    { id: "item5", name: "Game Console", price: 499.99, shipping: 20.00, image: "/assets/gameconsole.jpg" },
+    { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "/assets/4ktv.jpg" },
 ];
 
 // Render All Items
