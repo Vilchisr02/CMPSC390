@@ -3,34 +3,123 @@
 /**************************/
 
 .section-hero {
-    margin-top: 10rem;
-    padding: 4.8rem 0 9.6rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 6rem 0;
+    width: 100%;
 }
 
 .hero {
-    max-width: 130rem;
-    margin: 0 auto;
-    padding: 0 3.2rem;
-    gap: 9.6rem;
+    display: flex;
+    max-width: 80rem;
+    width: 100%;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
     align-items: center;
-    text-align: center;
+    gap: 5rem;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.hero-primary{
-    font-size: 4rem;
-    margin-bottom: 2rem;
+.hero-text-box {
+    flex: 1;
+    max-width: 500px;
+}
+
+.hero-primary {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #111;
 }
 
 .hero-description {
-    font-size: 2rem;
-    line-height: 1.6;
-    margin-bottom: 4.8rem;
+    font-size: 1.3rem;
+    color: #555;
+    margin: 1.5rem 0;
+}
+
+.hero-btn {
+    display: inline-block;
+    background-color: #111;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.hero-footer {
+    font-size: 1rem;
+    color: #777;
+    margin-top: 0.8rem;
+}
+
+.hero-image-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-image {
+    max-width: 30em;
+    object-fit: cover;
+    border-radius: 2rem;
+}
+
+@media (max-width: 920px) {
+    .hero {
+        max-width: 60rem;
+        max-height: 40rem;
+        padding: 2rem;
+    }
+
+    .hero-text-box {
+        max-width: 100%;
+    }
+
+    .hero-image-box {
+        width: 100%;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .hero-primary {
+        font-size: 2.4rem;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+    }
+
+    .hero-btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+@media (max-width: 620px) {
+    .hero {
+        max-width: 50rem;
+        max-height: 40rem;
+        padding: 2rem;
+    }
 }
 
 /**************************/
 /* ITEM SECTION */
 /**************************/
 .section-items {
+    margin-top: 5rem;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -42,6 +131,8 @@
     gap: 30px;
     flex-wrap: wrap;
     justify-content: center;
+    margin-left: 5rem;
+    margin-right: 5rem;
 }
 
 .item-card {
