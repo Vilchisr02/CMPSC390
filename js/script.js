@@ -39,20 +39,23 @@ updateCartDisplay();
 
 // Product Items
 const items = [
-    { id: "item1", name: "Laptop", price: 999.99, shipping: 15.00, image: "/assets/laptop.jpg" },
-    { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "/assets/phone.jpg" },
-    { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "/assets/headphones.jpg" },
-    { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "/assets/camera.jpg" },
-    { id: "item5", name: "Game Console", price: 499.99, shipping: 20.00, image: "/assets/gameconsole.jpg" },
-    { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "/assets/4ktv.jpg" },
+    { id: "item1", name: "Laptop", price: 999.99, shipping: 15.00, image: "/assets/laptop.jpg", category: "Electronics" },
+    { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "/assets/phone.jpg", category: "Electronics" },
+    { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "/assets/headphones.jpg", category: "Accessories" },
+    { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "/assets/camera.jpg", category: "Electronics" },
+    { id: "item5", name: "Game Console", price: 499.99, shipping: 20.00, image: "/assets/gameconsole.jpg", category: "Gaming" },
+    { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "/assets/4ktv.jpg", category: "Home" },
 ];
 
-// Render All Items
-function renderItems() {
+function filterItemsByCategory(category) {
     const itemContainer = document.getElementById("itemContainer");
     if (!itemContainer) return;
 
-    items.forEach(item => {
+    itemContainer.innerHTML = "";
+
+    const filteredItems = category === "all" ? items : items.filter(item => item.category === category);
+
+    filteredItems.forEach(item => {
         const itemCard = document.createElement("div");
         itemCard.classList.add("item-card");
 
@@ -76,6 +79,18 @@ function renderItems() {
         }
     });
 }
+
+document.querySelectorAll(".category-btn").forEach(button => {
+    button.addEventListener("click", function () {
+        document.querySelectorAll(".category-btn").forEach(btn => btn.classList.remove("active"));
+        this.classList.add("active");
+        const category = this.getAttribute("data-category");
+        filterItemsByCategory(category);
+    });
+});
+
+// Initial render of all items
+filterItemsByCategory("all");
 
 // Add to Cart
 function addItemToCart(item) {
@@ -116,6 +131,7 @@ function updateCartDisplay() {
             <div class="cart-item-image" style="background-image: url(${item.image});"></div>
             <div class="cart-item-info">
                 <p><strong>Item Name:</strong> ${item.name}</p>
+                <p><strong>Category:</strong> ${item.category}</p> <!-- Add category here -->
                 <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> $${item.shipping.toFixed(2)}</p>
                 <p><strong>Quantity:</strong> ${item.quantity}</p>
@@ -158,6 +174,7 @@ if (window.location.pathname.includes("product.html")) {
                 <h2>${selectedItem.name}</h2>
                 <p><strong>Price:</strong> $${selectedItem.price.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
+                <p><strong>Category:</strong> ${selectedItem.category}</p>
                 <p><strong>Seller:</strong> Placeholder Seller</p>
                 <button id="buyNowBtn">Buy Now</button>
                 <button id="addToCartBtn">Add to Cart</button>
@@ -181,8 +198,6 @@ if (window.location.pathname.includes("product.html")) {
     } else if (productPage) {
         productPage.innerHTML = "<p>Product not found</p>";
     }
-} else {
-    renderItems();
 }
 
 // Checkout Feature
@@ -204,6 +219,7 @@ if (window.location.pathname.includes("checkout.html")) {
             cartItem.innerHTML = `
                 <div class="checkout-cart-item-info">
                     <p><strong>Name:</strong> ${item.name}</p>
+                    <p><strong>Category:</strong> ${item.category}</p>
                     <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
                     <p><strong>Shipping:</strong> $${item.shipping.toFixed(2)}</p>
                     <p><strong>Quantity:</strong> ${item.quantity}</p>
@@ -276,11 +292,12 @@ if (window.location.pathname.includes("checkout.html")) {
 }
 
 // Listing Feature
-if (window.location.pathname.includes("listing.html")){
+if (window.location.pathname.includes("listing.html")) {
     const postListingBtn = document.querySelector('.post-listing-btn');
     const itemNameInput = document.getElementById('itemName');
     const itemPriceInput = document.getElementById('itemPrice');
     const shippingCostInput = document.getElementById('shippingCost');
+    const itemCategoryInput = document.getElementById('itemCategory');
     const shippingOptions = document.querySelectorAll('.shipping-option');
     const listingPopup = document.getElementById('listingPopup');
 
@@ -288,32 +305,41 @@ if (window.location.pathname.includes("listing.html")){
 
     shippingOptions.forEach(option => {
         option.addEventListener('click', function () {
-            this.classList.toggle('selected'); 
-
+            this.classList.toggle('selected');
             if (this.classList.contains('selected')) {
                 selectedShippingMethod = this.innerText;
             } else {
                 selectedShippingMethod = "";
             }
-
             shippingOptions.forEach(opt => {
                 if (opt !== this) {
                     opt.classList.remove('selected');
                 }
             });
         });
-    })
+    });
 
     postListingBtn.addEventListener('click', function () {
         const itemName = itemNameInput.value.trim();
         const itemPrice = parseFloat(itemPriceInput.value.trim());
         const shippingCost = parseFloat(shippingCostInput.value.trim());
+        const itemCategory = itemCategoryInput.value;
 
         if (!itemName || isNaN(itemPrice) || isNaN(shippingCost) || !selectedShippingMethod) {
             alert("Please fill in all fields correctly!");
-                return;
+            return;
         }
 
+        const newItem = {
+            id: `item${items.length + 1}`,
+            name: itemName,
+            price: itemPrice,
+            shipping: shippingCost,
+            image: "/assets/placeholder.jpg", // Image upload functionality later
+            category: itemCategory
+        };
+
+        items.push(newItem);
         listingPopup.style.display = 'flex';
 
         itemNameInput.value = '';
@@ -322,7 +348,7 @@ if (window.location.pathname.includes("listing.html")){
         shippingOptions.forEach(opt => opt.classList.remove('selected'));
         selectedShippingMethod = "";
     });
-    
+
     closePopupBtn.addEventListener('click', function () {
         listingPopup.style.display = 'none';
     });
