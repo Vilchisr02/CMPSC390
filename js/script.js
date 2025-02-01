@@ -254,20 +254,50 @@ if (window.location.pathname.includes("checkout.html")) {
             if (cart.length === 0) {
                 alert("Your cart is empty. Add items before confirming your order.");
             } else {
-                const arrivalDate = getExpectedArrivalDate();
+                // Create an order object
+                const order = {
+                    id: generateOrderId(), // Generate a unique order ID
+                    date: new Date().toLocaleDateString(), // Current date
+                    items: [...cart], // Copy cart items
+                    total: calculateOrderTotal(cart), // Calculate total
+                    status: "Processing", // Default status
+                };
 
-                if (orderConfirmationMessage) {
-                    orderConfirmationMessage.textContent = `Order Confirmed! Expected Arrival: ${arrivalDate}`;
-                }
-
-                if (orderConfirmationPopup) {
-                    orderConfirmationPopup.classList.add("show");
-                }
+                // Save the order to localStorage
+                saveOrder(order);
 
                 cart.length = 0;
                 saveCartToLocalStorage();
+
+                // Show confirmation message
+                const arrivalDate = getExpectedArrivalDate();
+                orderConfirmationMessage.textContent = `Order Confirmed! Order ID: ${order.id}. Expected Arrival: ${arrivalDate}`;
+                orderConfirmationPopup.classList.add("show");
+
+                // Redirect to account page after a delay
+                setTimeout(() => {
+                    orderConfirmationPopup.classList.remove("show");
+                    window.location.href = "account.html"; // Redirect to account page
+                }, 3000);
             }
         });
+    }
+
+    // Function to generate a unique order ID
+    function generateOrderId() {
+        return `ORD${Math.floor(Math.random() * 1000000)}`;
+    }
+
+    // Function to calculate the total order amount
+    function calculateOrderTotal(cart) {
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+
+    // Function to save the order to localStorage
+    function saveOrder(order) {
+        const orders = JSON.parse(localStorage.getItem("orders")) || [];
+        orders.push(order);
+        localStorage.setItem("orders", JSON.stringify(orders));
     }
 
     const closeOrderPopupBtn = document.querySelector(".close-popup-btn");
@@ -411,8 +441,58 @@ if (window.location.pathname.includes("account.html")) {
             if (e.target === popup) hidePopup(popup);
         });
     });
-};
 
+    // View Orders Feature
+    const viewOrdersBtn = document.createElement("button");
+    viewOrdersBtn.textContent = "View Orders";
+    viewOrdersBtn.classList.add("account-btn");
+    viewOrdersBtn.style.marginTop = "1rem";
+    document.querySelector(".account-details").appendChild(viewOrdersBtn);
+
+    const viewOrdersPopup = document.getElementById("viewOrdersPopup");
+    const ordersListContainer = document.querySelector("#viewOrdersPopup .orders-list");
+
+    viewOrdersBtn.addEventListener("click", () => {
+        showPopup(viewOrdersPopup);
+        displayOrders();
+    });
+
+    function displayOrders() {
+        // Fetch orders from localStorage or an API
+        const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+        ordersListContainer.innerHTML = "";
+
+        if (orders.length === 0) {
+            ordersListContainer.innerHTML = "<p>No orders found.</p>";
+            return;
+        }
+
+        orders.forEach((order, index) => {
+            const orderItem = document.createElement("div");
+            orderItem.classList.add("order-item");
+
+            orderItem.innerHTML = `
+                <div class="order-details">
+                    <p><strong>Order ID:</strong> ${order.id}</p>
+                    <p><strong>Date:</strong> ${order.date}</p>
+                    <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
+                </div>
+                <div class="order-status">${order.status}</div>
+            `;
+
+            ordersListContainer.appendChild(orderItem);
+        });
+    }
+
+    viewOrdersPopup.addEventListener("click", (e) => {
+        if (e.target === viewOrdersPopup) hidePopup(viewOrdersPopup);
+    });
+
+    document.querySelector("#viewOrdersPopup .popup-close").addEventListener("click", () => {
+        hidePopup(viewOrdersPopup);
+    });
+};
 
 // Go to SignUp
 document.getElementById("goToSignUp").addEventListener("click", function(event) {
