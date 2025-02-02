@@ -10,6 +10,64 @@ const backToShopping = document.querySelector(".back-to-shopping");
 const cartItemsContainer = document.querySelector(".cart-items");
 const checkoutBtn = document.querySelector(".checkout-btn");
 const closePopupBtn = document.querySelector(".close-popup-btn");
+const searchBar = document.getElementById("searchBar");
+const clearSearchBtn = document.getElementById("clearSearchBtn");
+
+
+// Function to filter items based on search term
+function filterItemsBySearch(searchTerm) {
+    const itemContainer = document.getElementById("itemContainer");
+    if (!itemContainer) return;
+
+    // Clear the current items
+    itemContainer.innerHTML = "";
+
+    // Filter items by name or category
+    const filteredItems = items.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Render the filtered items
+    filteredItems.forEach(item => {
+        const itemCard = document.createElement("div");
+        itemCard.classList.add("item-card");
+
+        itemCard.innerHTML = `
+            <a href="product.html?id=${item.id}" class="item-link">
+                <img src="${item.image}" alt="${item.name}">
+                <h3>${item.name}</h3>
+                <p>Price: $${item.price.toFixed(2)}</p>
+                <p>Shipping: $${item.shipping.toFixed(2)}</p>
+            </a>
+            <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+        `;
+        itemContainer.appendChild(itemCard);
+    });
+
+    itemContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("add-to-cart")) {
+            const itemId = e.target.getAttribute("data-id");
+            const selectedItem = items.find(item => item.id === itemId);
+            if (selectedItem) addItemToCart(selectedItem);
+        }
+    });
+}
+
+// Add event listener to the search bar
+if (searchBar) {
+    searchBar.addEventListener("input", function () {
+        const searchTerm = this.value.trim();
+        filterItemsBySearch(searchTerm);
+    });
+}
+
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener("click", function () {
+        searchBar.value = "";
+        filterItemsBySearch("");
+    });
+}
 
 // Burger Menu Toggle
 const burgerMenu = document.getElementById('burgerMenu');
