@@ -101,7 +101,7 @@ const items = [
     { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "/assets/phone.jpg", category: "Electronics" },
     { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "/assets/headphones.jpg", category: "Accessories" },
     { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "/assets/camera.jpg", category: "Electronics" },
-    { id: "item5", name: "Game Console", price: 499.99, shipping: 20.00, image: "/assets/gameconsole.jpg", category: "Gaming" },
+    { id: "item5", name: "PlayStation 5", price: 499.99, shipping: 20.00, image: "/assets/gameconsole.jpg", category: "Gaming" },
     { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "/assets/4ktv.jpg", category: "Home" },
 ];
 
