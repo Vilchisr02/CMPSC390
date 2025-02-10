@@ -25,12 +25,35 @@ body {
     font-family: "Readex Pro" ,sans-serif !important;
     line-height: 1;
     font-weight: 400;
-    overflow-x: hidden;
-    background-image: url('../assets/back-img-3.jpg'); 
+    overflow-x: hidden; 
+    padding-top: 0;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding-top: 0;
+}
+
+.home-page {
+    background-image: url('../assets/back-img-2.jpg');
+}
+
+.about-page {
+    background-image: url('../assets/back-img-1.jpg');
+}
+
+.account-page {
+    background-image: url('../assets/back-img-3.jpg');
+}
+
+.listing-page {
+    background-image: url('../assets/back-img-4.jpg');
+}
+
+.individual-product-page {
+    background-image: url('../assets/back-img-5.jpg');
+}
+
+.checkout-page {
+    background-image: url('../assets/back-img-6.jpg');
 }
 
 .header {

@@ -290,7 +290,7 @@
 /****************************************************************************************************************/
 
 .product-page {
-    margin: 14rem auto;
+    margin: 4rem auto;
     gap: 2rem;
     padding: 2rem;
     max-width: 30rem;
@@ -366,6 +366,7 @@
 
 .section-checkout {
     min-height: 80vh;
+    margin-top: 9.6rem;
 }
 
 .checkout-section,
@@ -516,8 +517,9 @@
 /****************************************************************************************************************/
 
 .about-section {
-    padding-top: 9.6rem;
+    margin-top: 12.6rem;
     text-align: center;
+    margin-bottom: 12.6rem;
 }
 
 .about-container {
@@ -602,6 +604,7 @@ main.listing-container {
     justify-content: center;
     align-items: center;
     min-height: 82.9vh;
+    margin-top: 9.6rem;
 }
 
 .listing-form {
