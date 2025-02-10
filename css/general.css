@@ -26,7 +26,11 @@ body {
     line-height: 1;
     font-weight: 400;
     overflow-x: hidden;
-    padding-top: 9.6rem;
+    background-image: url('../assets/back-img-3.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-top: 0;
 }
 
 .header {
@@ -42,6 +46,16 @@ body {
     background-color: #001f3f;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
 
 .main-logo {

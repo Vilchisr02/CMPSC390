@@ -9,6 +9,8 @@
     background-color: #f4f4f4;
     padding: 6rem 0;
     width: 100%;
+    background: transparent;
+    margin-top: 9.6rem;
 }
 
 .hero {
@@ -73,6 +75,7 @@
     border-radius: 2rem;
 }
 
+/*back ground part*/
 @media (max-width: 920px) {
     .hero {
         max-width: 60rem;
@@ -513,7 +516,7 @@
 /****************************************************************************************************************/
 
 .about-section {
-    padding: 4rem 2rem;
+    padding-top: 9.6rem;
     text-align: center;
 }
 
