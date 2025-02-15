@@ -7,8 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout</title>
 
-    <link rel="stylesheet" href="css/general.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/general-style.css" />
+    <link rel="stylesheet" href="css/homepage-style.css" />
+    <link rel="stylesheet" href="css/about-style.css" />
+    <link rel="stylesheet" href="css/account-style.css" />
+    <link rel="stylesheet" href="css/product-style.css" />
+    <link rel="stylesheet" href="css/listing-style.css" />
+    <link rel="stylesheet" href="css/checkout-style.css" />
 
     <!-- Readex Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +25,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet">
     
-    <script type="module" src="js/api.js"></script>
     <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/auth-front-script.js"></script>
+    <script type="module" src="js/account-script.js"></script>
+    <script type="module" src="js/listing-script.js"></script>
+  
 </head>
 <body class="checkout-page">
     <header class="header">
@@ -112,6 +120,15 @@
             <p>Don't have an account? <a href="#" id="goToSignUp">Create one here</a></p>
             <button class="google-sign-in">Sign In with Google</button>
             <button class="apple-sign-in">Sign In with Apple</button>
+        </div>
+    </div>
+    
+    <div id="signOutPopup" class="popup sign-out-popup">
+        <div class="popup-content sign-out-content">
+            <h2>Sign Out</h2>
+            <p>Are you sure you want to sign out?</p>
+            <button type="button" class="popup-close sign-out-close">X</button>
+            <button type="button" class="confirm-sign-out-btn">Sign Out</button>
         </div>
     </div>
     

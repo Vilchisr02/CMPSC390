@@ -1,0 +1,127 @@
+/****************************************************************************************************************/
+/* ACCOUNT PAGE (account.html) */
+/****************************************************************************************************************/
+.section-account {
+    margin-top: 6rem;
+    margin-bottom: 6rem;
+}
+
+.account-details {
+    display: flex;
+    flex-direction: column;
+    max-width: 45rem;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(1, 1, 1, 0.1);
+}
+
+.account-details label {
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.account-btn {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 0.5rem;
+}
+
+.account-btn:hover {
+    background-color: #0056b3;
+}
+
+.list-item-btn {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.list-item-btn:hover {
+    background-color: #1e7e34;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.user-info p {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0.75rem 0;
+    line-height: 1.6;
+
+}
+
+.user-info strong {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.user-info {
+    border: 1px solid #ddd;
+}
+
+
+/* View Orders Pop-up */
+#viewOrdersPopup .popup-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+}
+
+#viewOrdersPopup .orders-list {
+    margin-top: 1rem;
+}
+
+#viewOrdersPopup .order-item {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#viewOrdersPopup .order-item:last-child {
+    border-bottom: none;
+}
+
+#viewOrdersPopup .order-item p {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+#viewOrdersPopup .order-item .order-details {
+    flex: 1;
+}
+
+#viewOrdersPopup .order-item .order-status {
+    font-weight: bold;
+    color: #007bff;
+}

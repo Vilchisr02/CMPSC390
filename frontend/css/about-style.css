@@ -1,0 +1,83 @@
+/****************************************************************************************************************/
+/* ABOUT PAGE (about.html) */
+/****************************************************************************************************************/
+
+.about-section {
+    margin-top: 12.6rem;
+    text-align: center;
+    margin-bottom: 12.6rem;
+}
+
+.about-container {
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.about-heading {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+
+.about-description {
+    font-size: 2rem;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.about-mission,
+.about-values,
+.about-team,
+.about-cta {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    color: #333;
+}
+
+.about-mission h2,
+.about-values h2,
+.about-team h2,
+.about-cta h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.about-values ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+.about-values li {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.about-values li::before {
+    content: "•";
+    color: #007bff;
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0;
+    top: -0.2rem;
+}
+
+.about-cta .cta-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.about-cta .cta-link:hover {
+    color: #0056b3;
+}
+

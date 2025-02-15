@@ -6,9 +6,13 @@
     <meta name="description" content="MarketShift is the place shop for deals!" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <link rel="stylesheet" href="css/general.css" />
-    <link rel="stylesheet" href="css/queries.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/general-style.css" />
+    <link rel="stylesheet" href="css/homepage-style.css" />
+    <link rel="stylesheet" href="css/about-style.css" />
+    <link rel="stylesheet" href="css/account-style.css" />
+    <link rel="stylesheet" href="css/product-style.css" />
+    <link rel="stylesheet" href="css/listing-style.css" />
+    <link rel="stylesheet" href="css/checkout-style.css" />
 
     <!-- Readex Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +24,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet">
     
-    <script type="module" src="js/api.js"></script>
     <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/auth-front-script.js"></script>
+    <script type="module" src="js/account-script.js"></script>
+    <script type="module" src="js/listing-script.js"></script>
+    
     <title>Account Details</title>
 </head>
 <body class="account-page">
@@ -56,8 +63,10 @@
                 <div class="user-info">
                     <p><strong>First Name:</strong> John</p>
                     <p><strong>Last Name:</strong> Doe</p>
+                    <p><strong>Username:</strong> jDoe01</p>
                     <p><strong>Email:</strong> johndoe@example.com</p>
                     <p><strong>Address:</strong> 1234 Elm Street, Springfield, IL 62701</p>
+                    <p><strong>Phone Number:</strong> 1234567890 </p>
                 </div>
                 <button type="button" class="account-btn" id="setupPaymentBtn">Set Up Payment Method</button>
                 <button type="button" class="account-btn" id="viewPaymentBtn">View Payment Methods</button>
@@ -107,6 +116,15 @@
             <p>Don't have an account? <a href="#" id="goToSignUp">Create one here</a></p>
             <button class="google-sign-in">Sign In with Google</button>
             <button class="apple-sign-in">Sign In with Apple</button>
+        </div>
+    </div>
+    
+    <div id="signOutPopup" class="popup sign-out-popup">
+        <div class="popup-content sign-out-content">
+            <h2>Sign Out</h2>
+            <p>Are you sure you want to sign out?</p>
+            <button type="button" class="popup-close sign-out-close">X</button>
+            <button type="button" class="confirm-sign-out-btn">Sign Out</button>
         </div>
     </div>
     
