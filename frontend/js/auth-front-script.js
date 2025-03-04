@@ -8,7 +8,6 @@ function showSignOutPopup() {
 }
 
 // Function to hide the sign-out popup
-
 function hideSignOutPopup() {
     signOutPopup.style.display = "none";
 }

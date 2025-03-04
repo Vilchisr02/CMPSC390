@@ -1,5 +1,19 @@
 // Check if the current page is account.html
 if (window.location.pathname.includes("account.html")) {
+    // Function to format phone number as (###) ###-####
+    function formatPhoneNumber(phoneNumber) {
+        if (!phoneNumber) return 'N/A';
+        // Remove any non-numeric characters
+        const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+        // Check if the input is of correct length
+        if (cleaned.length !== 10) return 'N/A';
+        // Format the phone number
+        const part1 = cleaned.slice(0, 3);
+        const part2 = cleaned.slice(3, 6);
+        const part3 = cleaned.slice(6, 10);
+        return `(${part1}) ${part2}-${part3}`;
+    }
+
     // Function to display user account information
     function displayUserInfo() {
         // Get the user data from localStorage
@@ -19,7 +33,7 @@ if (window.location.pathname.includes("account.html")) {
                 <p><strong>Username:</strong> ${user.Username || 'N/A'}</p>
                 <p><strong>Email:</strong> ${user.Email || 'N/A'}</p>
                 <p><strong>Address:</strong> ${user.Address || 'N/A'}</p>
-                <p><strong>Phone Number:</strong> ${user.PhoneNumber || 'N/A'}</p>
+                <p><strong>Phone Number:</strong> ${formatPhoneNumber(user.PhoneNumber) || 'N/A'}</p>
             `;
         } else {
             // If no user data is found, display a message

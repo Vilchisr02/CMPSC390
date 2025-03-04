@@ -3,6 +3,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // Import JWT
 const router = express.Router();
 
 // Middleware to parse JSON bodies
@@ -21,6 +22,9 @@ const pool = mysql.createPool({
 
 // Promisify the pool for async/await usage
 const promisePool = pool.promise();
+
+// Secret key for JWT (should be stored in environment variables in production)
+const JWT_SECRET = 'your-secret-key';
 
 // Sign-up route
 router.post('/signup', async (req, res) => {
@@ -59,8 +63,8 @@ router.post('/signup', async (req, res) => {
         // Exclude the password from the user data
         const { password: _, ...userData } = newUser[0];
 
-        // Generate a token (you can use the same method as in sign-in)
-        const token = generateToken(userData);
+        // Generate a JWT token
+        const token = jwt.sign({ userId: userData.Userid, username: userData.Username }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(201).json({ message: 'User created successfully', user: userData, token });
     } catch (error) {
@@ -68,6 +72,7 @@ router.post('/signup', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 // Sign-in route
 router.post('/signin', async (req, res) => {
     const { username, password } = req.body;
@@ -99,8 +104,8 @@ router.post('/signin', async (req, res) => {
         // Return user data (excluding password) upon successful login
         const { password: _, ...userData } = user;
 
-        // Generate a token (you can use JWT or any other method)
-        const token = generateToken(userData); // Implement this function to generate a token
+        // Generate a JWT token
+        const token = jwt.sign({ userId: user.Userid, username: user.Username }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'Login successful', user: userData, token });
     } catch (error) {
@@ -109,10 +114,4 @@ router.post('/signin', async (req, res) => {
     }
 });
 
-// Function to generate a token (example using JWT)
-function generateToken(user) {
-    // Create a simple token by combining user data and a timestamp
-    const tokenData = `${user.id}:${user.username}:${Date.now()}`;
-    return Buffer.from(tokenData).toString('base64'); // Encode the token in base64
-}
 module.exports = router;

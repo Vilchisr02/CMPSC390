@@ -28,6 +28,7 @@
     <script type="module" src="js/auth-front-script.js"></script>
     <script type="module" src="js/account-script.js"></script>
     <script type="module" src="js/listing-script.js"></script>
+    <script type="module" src="js/display-account-info.js"></script>
     
     <title>Account Details</title>
 </head>
@@ -147,21 +148,17 @@
             <h2>Set Up Your Payment Method</h2>
             <form>
                 <label for="cardName">Card Name</label>
-                <input type="text" id="cardName" name="cardName" placeholder="Card Name">
-
-                <label for="cardType">Card Type</label>
-                <input type="text" id="cardType" name="cardType" placeholder="Card Type">
+                <input type="text" id="cardName" name="cardName" placeholder="John Doe">
 
                 <label for="cardNumber">Card Number</label>
-                <input type="text" id="cardNumber" name="cardNumber" placeholder="Card Number">
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456">
 
                 <label for="cardExpiry">Card Expiration Date</label>
-                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY">
+                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="YYYY/MM/DD">
 
                 <label for="cardCVV">Card CVV</label>
-                <input type="text" id="cardCVV" name="cardCVV" placeholder="CVV">
+                <input type="text" id="cardCVV" name="cardCVV" placeholder="000">
 
-                <button type="button" id="linkPaypal" class="popup-btn">Link PayPal Account</button>
                 <button type="submit" class="popup-btn">Save Payment Method</button>
             </form>
             <button type="button" class="popup-close">X</button>
@@ -169,25 +166,22 @@
     </div>
 
     <div id="viewPaymentPopup" class="popup">
-        <div class="popup-content">
-            <h2>View Your Payment Methods</h2>
-            <button type="button" class="popup-btn">Payment Method #1</button>
-            <button type="button" class="popup-btn">Payment Method #2</button>
-            <button type="button" class="popup-btn">Payment Method #3</button>
-            <button type="button" class="popup-btn">Payment Method #4</button>
-            <button type="button" class="popup-close">X</button>
-        </div>
+      <div class="popup-content">
+          <h2>View Your Payment Methods</h2>
+          <div id="paymentMethodsContainer">
+              <!-- Payment methods will be dynamically inserted here -->
+          </div>
+          <button type="button" class="popup-close">X</button>
+      </div>
     </div>
 
     <div id="paymentDetailsPopup" class="popup">
         <div class="popup-content">
             <h2>Payment Method Details</h2>
             <p><strong>Card Name:</strong> <span id="detailsCardName">Card Name Here</span></p>
-            <p><strong>Card Type:</strong> <span id="detailsCardType">Card Type Here</span></p>
             <p><strong>Card Number:</strong> <span id="detailsCardNumber">Card Number Here</span></p>
             <p><strong>Card Expiration Date:</strong> <span id="detailsCardExpiry">MM/YY</span></p>
             <p><strong>Card CVV:</strong> <span id="detailsCardCVV">CVV</span></p>
-            <button type="button" id="unlinkPaypal" class="popup-btn">Unlink PayPal Account</button>
             <button type="button" class="popup-close">X</button>
         </div>
     </div>

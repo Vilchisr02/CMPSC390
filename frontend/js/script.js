@@ -436,7 +436,7 @@ if(checkoutBtn){
     });
 }
 
-//Show Password
+// Show Password for Sign-Up
 document.getElementById('showPassword').addEventListener('change', function() {
     const passwordInput = document.getElementById('passwordSignUp');
     if (this.checked) {
@@ -446,5 +446,13 @@ document.getElementById('showPassword').addEventListener('change', function() {
     }
 });
 
-
+// Show Password for Sign-In
+document.getElementById('showPasswordSignIn').addEventListener('change', function() {
+    const passwordInput = document.getElementById('password');
+    if (this.checked) {
+        passwordInput.type = 'text'; // Show password
+    } else {
+        passwordInput.type = 'password'; // Hide password
+    }
+});
 

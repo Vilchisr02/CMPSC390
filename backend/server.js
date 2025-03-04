@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const authRoutes = require('./auth'); // Import the auth routes
+const authRoutes = require('./auth');
+const paymentRoutes = require('./payment');
 
 const app = express();
 const PORT = 3000;
@@ -10,8 +11,8 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Use the authentication routes
 app.use('/auth', authRoutes);
+app.use('/payment', paymentRoutes);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
