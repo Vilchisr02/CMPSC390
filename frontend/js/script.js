@@ -1,4 +1,3 @@
-// DOM Elements
 const signUpBtn = document.getElementById("signUpBtn");
 const signInBtn = document.getElementById("signInBtn");
 const cartBtn = document.getElementById("cartBtn");
@@ -13,7 +12,6 @@ const closePopupBtn = document.querySelector(".close-popup-btn");
 const searchBar = document.getElementById("searchBar");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
 
-// Function to filter items based on search term
 function filterItemsBySearch(searchTerm) {
     const itemContainer = document.getElementById("itemContainer");
     if (!itemContainer) return;
@@ -95,14 +93,60 @@ const cart = loadCartFromLocalStorage();
 updateCartDisplay();
 
 // Product Items
-const items = [
-    { id: "item1", name: "Laptop", price: 999.99, shipping: 15.00, image: "./assets/laptop.jpg", category: "Electronics" },
-    { id: "item2", name: "Phone", price: 499.99, shipping: 10.00, image: "./assets/phone.jpg", category: "Electronics" },
-    { id: "item3", name: "Headphones", price: 199.99, shipping: 5.00, image: "./assets/headphones.jpg", category: "Accessories" },
-    { id: "item4", name: "Camera", price: 599.99, shipping: 12.00, image: "./assets/camera.jpg", category: "Electronics" },
-    { id: "item5", name: "PlayStation 5", price: 499.99, shipping: 20.00, image: "./assets/gameconsole.jpg", category: "Gaming" },
-    { id: "item6", name: "4K TV", price: 999.99, shipping: 20.00, image: "./assets/4ktv.jpg", category: "Home" },
-];
+let items = [];
+
+function fetchItems() {
+    return fetch('/listing/listings', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.products) {
+            items = data.products.map(item => ({
+                id: `item${item.Productid}`,
+                name: item.Name,
+                price: item.Price,
+                shipping: item.Shipping,                
+                image: "./assets/placeholder.jpg",
+                category: item.Category
+            }));
+            return items;
+        } else {
+            console.error('No products found in the response');
+            return [];
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching items:', error);
+        return [];
+    });
+}
+
+fetchItems().then(fetchedItems => {
+    items = fetchedItems;
+    initializeApp();
+});
+
+function initializeApp() {
+    filterItemsByCategory("all");
+    updateCartDisplay();
+
+    if (window.location.pathname.includes("product.html")) {
+        renderProductPage();
+    }
+
+    if (window.location.pathname.includes("checkout.html")) {
+        renderCheckoutPage();
+    }
+}
 
 function filterItemsByCategory(category) {
     const itemContainer = document.getElementById("itemContainer");
@@ -146,9 +190,6 @@ document.querySelectorAll(".category-btn").forEach(button => {
     });
 });
 
-// Initial render of all items
-filterItemsByCategory("all");
-
 // Add to Cart
 function addItemToCart(item) {
     const existingItem = cart.find(cartItem => cartItem.id === item.id);
@@ -188,7 +229,7 @@ function updateCartDisplay() {
             <div class="cart-item-image" style="background-image: url(${item.image});"></div>
             <div class="cart-item-info">
                 <p><strong>Item Name:</strong> ${item.name}</p>
-                <p><strong>Category:</strong> ${item.category}</p> <!-- Add category here -->
+                <p><strong>Category:</strong> ${item.category}</p>
                 <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> $${item.shipping.toFixed(2)}</p>
                 <p><strong>Quantity:</strong> ${item.quantity}</p>
@@ -216,7 +257,7 @@ function updateCartDisplay() {
 }
 
 // Render Product Page
-if (window.location.pathname.includes("product.html")) {
+function renderProductPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get("id");
     const selectedItem = items.find(item => item.id === productId);
@@ -258,7 +299,7 @@ if (window.location.pathname.includes("product.html")) {
 }
 
 // Checkout Feature
-if (window.location.pathname.includes("checkout.html")) {
+function renderCheckoutPage() {
     const checkoutCartContainer = document.querySelector(".checkout-cart-items");
     const orderSummaryContainer = document.querySelector(".order-summary");
     const orderConfirmationPopup = document.getElementById("orderConfirmationPopup");
