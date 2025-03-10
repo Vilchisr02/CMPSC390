@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="MarketShift is the place shop for deals!" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout</title>
+
+    <link rel="stylesheet" href="css/general-style.css" />
+    <link rel="stylesheet" href="css/homepage-style.css" />
+    <link rel="stylesheet" href="css/about-style.css" />
+    <link rel="stylesheet" href="css/account-style.css" />
+    <link rel="stylesheet" href="css/product-style.css" />
+    <link rel="stylesheet" href="css/listing-style.css" />
+    <link rel="stylesheet" href="css/checkout-style.css" />
+
+    <!-- Readex Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet">
+
+    <!-- Questrial -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet">
+    
+    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/auth-front-script.js"></script>
+    <script type="module" src="js/account-script.js"></script>
+    <script type="module" src="js/listing-script.js"></script>
+  
+</head>
+<body class="checkout-page">
+    <header class="header">
+        <div class="logo-search-group">
+            <a href="index.html">
+                <div class="main-logo">MarketShift</div>
+            </a>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search products...">
+        </div>
+    
+        <div class="burger-menu" id="burgerMenu">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    
+        <nav class="main-nav">
+            <ul class="main-nav-list">
+                <li><a class="main-nav-link" href="#" id="signUpBtn">SIGN UP</a></li>
+                <li><a class="main-nav-link" href="#" id="signInBtn">SIGN IN</a></li>
+                <li><a class="main-nav-link" href="about.html">ABOUT</a></li>
+                <li><a class="main-nav-link" href="account.html">ACCOUNT</a></li>
+                <li><a class="main-nav-link" href="listing.html">SELL</a></li>
+                <li><a class="main-nav-link" href="#" id="cartBtn">CART</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section-checkout">
+            <section class="checkout-section">
+                <h2>Your Cart</h2>
+                <div class="checkout-cart-items"></div>
+            </section>
+            <section class="ship-to-section">
+                <h2>Ship To</h2>
+                <div class="ship-to-details">
+                    <p><strong>Name:</strong> John Doe</p>
+                    <p><strong>Address:</strong> 1234 Elm Street, Springfield, IL 62701</p>
+                </div>
+            </section>
+            <section class="order-section">
+                <h2>Order Summary</h2>
+                <div class="order-summary"></div>
+                <button id="confirmOrderBtn" class="confirm-order-btn">Confirm Order</button>
+            </section>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 MarketShift. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Pop-ups -->
+    <div id="signUpPopup" class="popup sign-up-popup">
+        <div class="popup-content sign-up-content">
+            <h2>Create Your MarketShift Account</h2>
+            <form class="form-list sign-up-form">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" class="sign-up-input">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" class="sign-up-input">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" class="sign-up-input">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="sign-up-input">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="sign-up-input">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="sign-up-input">
+                <button type="button" class="popup-close sign-up-close">X</button>
+                <button type="submit" class="create-account-btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="signInPopup" class="popup sign-in-popup">
+        <div class="popup-content sign-in-content">
+            <h2>Sign In</h2>
+            <form class="form-list sign-in-form">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="sign-in-input">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="sign-in-input">
+                <button type="button" class="popup-close sign-in-close">X</button>
+                <button type="submit" class="sign-in-btn">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="goToSignUp">Create one here</a></p>
+            <button class="google-sign-in">Sign In with Google</button>
+            <button class="apple-sign-in">Sign In with Apple</button>
+        </div>
+    </div>
+    
+    <div id="signOutPopup" class="popup sign-out-popup">
+        <div class="popup-content sign-out-content">
+            <h2>Sign Out</h2>
+            <p>Are you sure you want to sign out?</p>
+            <button type="button" class="popup-close sign-out-close">X</button>
+            <button type="button" class="confirm-sign-out-btn">Sign Out</button>
+        </div>
+    </div>
+    
+    <div id="cartPopup" class="popup cart-popup">
+        <div class="popup-content cart-content">
+            <h2>Shopping Cart</h2>
+            <div class="cart-items"></div>
+            <p class="subtotal">Subtotal: $0.00</p>
+            <button type="button" class="popup-close cart-close">X</button>
+            <button type="button" class="back-to-shopping cart-back-to-shopping">Back to Shopping</button>
+            <button type="button" class="checkout-btn">Checkout</button>
+        </div>
+    </div>
+
+    <div id="orderConfirmationPopup" class="popup order-confirmation-popup">
+        <div class="popup-content">
+            <p id="orderConfirmationMessage"></p>
+            <button class="close-popup-btn">Close</button>
+        </div>
+    </div>
+</body>
+</html>
