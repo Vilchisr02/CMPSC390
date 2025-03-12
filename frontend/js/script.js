@@ -115,7 +115,7 @@ function fetchItems() {
                 name: item.Name,
                 price: item.Price,
                 shipping: item.Shipping,                
-                image: "./assets/placeholder.jpg",
+                image: `/uploads/${item.image}`, 
                 category: item.Category
             }));
             return items;
