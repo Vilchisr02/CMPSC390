@@ -1,78 +1,81 @@
 const express = require('express');
-const mysql = require('mysql2');
-const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken'); // Import JWT
 const router = express.Router();
+const mysql = require('mysql2');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
-router.use(bodyParser.json());
 
+// Database connection
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: 'Normal99!',
-    database: 'eCommerceDB',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    database: 'eCommerceDB'
 });
-
 const promisePool = pool.promise();
 
-// JWT Secret Key (must match auth.js and payment.js)
+// JWT Authentication Middleware
 const JWT_SECRET = 'your-secret-key';
 
-// Middleware to authenticate user using JWT
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
-
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided' });
-    }
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized: No token provided' });
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: 'Unauthorized: Invalid or expired token' });
-        }
-        req.user = user; // Attach the decoded user data to the request object
+        if (err) return res.status(403).json({ message: 'Unauthorized: Invalid token' });
+        req.user = user;
         next();
     });
 };
 
-// Route to handle listing submissions (protected by JWT)
-router.post('/listings', authenticateToken, async (req, res) => {
-    const { itemName, itemPrice, itemCategory, shippingCost } = req.body;
-    const userId = req.user.userId; // Extract userId from the token
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
 
-    if (!itemName || !itemPrice || !itemCategory) {
-        return res.status(400).json({ message: 'All fields are required' });
+// Modified Route to handle image upload
+router.post('/listings', authenticateToken, upload.single('productImage'), async (req, res) => {
+    const { itemName, itemPrice, itemCategory, shippingCost } = req.body;
+    const userId = req.user.userId;
+    const imageFileName = req.file ? req.file.filename : null;
+
+    if (!itemName || !itemPrice || !itemCategory || !shippingCost || !imageFileName) {
+        return res.status(400).json({ message: 'All fields including image are required' });
     }
 
     try {
         const [productResult] = await promisePool.query(
-            'INSERT INTO Product (Name, Price, Category, Shipping) VALUES (?, ?, ?, ?)',
-            [itemName, itemPrice, itemCategory, shippingCost]
+            'INSERT INTO Product (Name, Price, Category, Shipping, image) VALUES (?, ?, ?, ?, ?)',
+            [itemName, itemPrice, itemCategory, shippingCost, imageFileName]
         );
 
         const productId = productResult.insertId;
 
         await promisePool.query(
             'INSERT INTO Seller (StockQuantity, Price, Userid, Productid) VALUES (?, ?, ?, ?)',
-            [99, itemPrice, userId, productId]
+            [1, itemPrice, userId, productId]
         );
 
         res.status(201).json({ message: 'Listing added successfully', productId });
     } catch (error) {
-        console.error('Error during listing submission:', error);
+        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
-// Route to fetch all listings (products) - No authentication required
 router.get('/listings', async (req, res) => {
     try {
-        // Fetch all products from the Product table
-        const [products] = await promisePool.query('SELECT * FROM Product');
+        // Fetch all products from the Product table along with the seller's name
+        const [products] = await promisePool.query(`
+            SELECT Product.*, Users.Username AS sellerName 
+            FROM Product 
+            JOIN Seller ON Product.Productid = Seller.Productid 
+            JOIN Users ON Seller.Userid = Users.Userid
+        `);
         res.status(200).json({ products });
     } catch (error) {
         console.error('Error fetching listings:', error);
@@ -81,3 +84,4 @@ router.get('/listings', async (req, res) => {
 });
 
 module.exports = router;
+

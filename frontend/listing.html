@@ -60,39 +60,39 @@
 
     <main class="listing-container">
         <div class="listing-form">
-            <div class="image-upload">
-                <div class="image-placeholder"></div>
+          <form class="listing-details" enctype="multipart/form-data">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" class="listing-input" placeholder="Enter item name">
+
+            <label for="itemPrice">Item Price:</label>
+            <input type="number" id="itemPrice" class="listing-input" placeholder="Enter item price">
+
+            <label for="itemCategory">Category:</label>
+            <select id="itemCategory" class="listing-input">
+                <option value="Electronics">Electronics</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Home">Home</option>
+            </select>
+
+            <label>Shipping Method:</label>
+            <div class="shipping-method">
+                <button class="shipping-option">USPS</button>
+                <button class="shipping-option">FedEx</button>
+                <button class="shipping-option">UPS</button>
+                <button class="shipping-option">In-Person</button>
             </div>
-            <div class="listing-details">
-                <label for="itemName">Item Name:</label>
-                <input type="text" id="itemName" class="listing-input" placeholder="Enter item name">
 
-                <label for="itemPrice">Item Price:</label>
-                <input type="number" id="itemPrice" class="listing-input" placeholder="Enter item price">
+            <label for="shippingCost">Shipping Cost:</label>
+            <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
 
-                <!-- Add this inside the listing-details div -->
-                <label for="itemCategory">Category:</label>
-                <select id="itemCategory" class="listing-input">
-                    <option value="Electronics">Electronics</option>
-                    <option value="Gaming">Gaming</option>
-                    <option value="Clothing">Clothing</option>
-                    <option value="Accessories">Accessories</option>
-                    <option value="Home">Home</option>
-                </select>
+            <!-- NEW IMAGE INPUT BELOW -->
+            <label for="productImage">Product Image:</label>
+            <input type="file" id="productImage" name="productImage" accept="image/*" required>
 
-                <label>Shipping Method:</label>
-                <div class="shipping-method">
-                    <button class="shipping-option">USPS</button>
-                    <button class="shipping-option">FedEx</button>
-                    <button class="shipping-option">UPS</button>
-                    <button class="shipping-option">In-Person</button>
-                </div>
-
-                <label for="shippingCost">Shipping Cost:</label>
-                <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
-
-                <button class="post-listing-btn">Post Listing</button>
-            </div>
+            <button type="button" class="post-listing-btn">Post Listing</button>
+          </form>
         </div>
     </main>
 

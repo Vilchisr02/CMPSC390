@@ -30,46 +30,57 @@ if (window.location.pathname.includes("listing.html")) {
     });
 
     postListingBtn.addEventListener('click', function () {
-        const itemName = itemNameInput.value.trim();
-        const itemPrice = parseFloat(itemPriceInput.value.trim());
-        const itemCategory = itemCategoryInput.value;
-        const shippingCost = parseFloat(shippingCostInput.value.trim());
-        const token = localStorage.getItem('authToken'); // Retrieve the JWT token from localStorage
+        const itemName = document.getElementById('itemName').value.trim();
+        const itemPrice = parseFloat(document.getElementById('itemPrice').value.trim());
+        const itemCategory = document.getElementById('itemCategory').value;
+        const shippingCost = parseFloat(document.getElementById('shippingCost').value.trim());
+        const productImage = document.getElementById('productImage');
+        const token = localStorage.getItem('authToken');
 
-        if (!itemName || isNaN(itemPrice) || isNaN(shippingCost) || !selectedShippingMethod) {
+        // Check if fields and image are provided
+        if (!itemName || isNaN(itemPrice) || !itemCategory || isNaN(shippingCost) || !selectedShippingMethod) {
             alert("Please fill in all fields correctly!");
             return;
         }
 
+        // Specifically check if file selected
+        if (!productImage.files || productImage.files.length === 0) {
+            alert("Please select an image for your product!");
+            return;
+        }
+
+        // Create FormData for upload
+        const formData = new FormData();
+        formData.append('itemName', itemName);
+        formData.append('itemPrice', itemPrice);
+        formData.append('itemCategory', itemCategory);
+        formData.append('shippingCost', shippingCost);
+        formData.append('productImage', productImage.files[0]);
+
         fetch('/listing/listings', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Include the JWT token in the header
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ itemName, itemPrice, itemCategory, shippingCost }),
+            body: formData
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw err; });
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             listingPopup.style.display = 'flex';
             itemNameInput.value = '';
             itemPriceInput.value = '';
             shippingCostInput.value = '';
+            productImage.value = '';
             shippingOptions.forEach(opt => opt.classList.remove('selected'));
-            selectedShippingMethod = "";
         })
         .catch((error) => {
             console.error('Error:', error);
             alert(error.message || 'Failed to submit listing');
         });
     });
-    
+
     closePopupBtn.addEventListener('click', function() {
         listingPopupBtn.style.display = 'none';
     });
+
 }
