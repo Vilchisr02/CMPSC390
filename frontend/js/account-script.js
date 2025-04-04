@@ -50,7 +50,7 @@ if (window.location.pathname.includes("account.html")) {
         const cvv = document.getElementById('cardCVV').value;
         const cardholderName = document.getElementById('cardName').value;
 
-        const token = localStorage.getItem('authToken'); // Retrieve the JWT token from local storage
+        const token = localStorage.getItem('authToken');
 
         try {
             // Fetch existing payment methods for the user
@@ -98,13 +98,13 @@ if (window.location.pathname.includes("account.html")) {
     });
 
     document.getElementById('viewPaymentBtn').addEventListener('click', async () => {
-        const token = localStorage.getItem('authToken'); // Retrieve the JWT token from local storage
+        const token = localStorage.getItem('authToken');
 
         try {
             const response = await fetch('/payment/view-payments', {
                 method: 'GET',
                 headers: {
-                    'Authorization': token // Send the JWT token in the Authorization header
+                    'Authorization': token
                 }
             });
 
@@ -128,6 +128,69 @@ if (window.location.pathname.includes("account.html")) {
         } catch (error) {
             console.error('Error fetching payment methods:', error);
         }
+    });
+    
+    // View Listings Feature
+    const viewListingsBtn = document.getElementById('viewListingsBtn');
+    const viewListingsPopup = document.getElementById('viewListingsPopup');
+    const listingsContainer = document.getElementById('listingsContainer');
+    const closeListingsPopup = viewListingsPopup.querySelector('.popup-close');
+
+    viewListingsBtn.addEventListener('click', function() {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Please sign in to view your listings');
+            return;
+        }
+        
+        fetch('/listing/listings/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            listingsContainer.innerHTML = '';
+            
+            if (data.listings && data.listings.length > 0) {
+                data.listings.forEach(listing => {
+                    const listingElement = document.createElement('div');
+                    listingElement.className = 'listing-item';
+                    listingElement.innerHTML = `
+                        <div class="listing-image">
+                            <img src="/uploads/${listing.image}" alt="${listing.Name}">
+                        </div>
+                        <div class="listing-details">
+                            <h3>${listing.Name}</h3>
+                            <p>Price: $${listing.Price}</p>
+                            <p>Category: ${listing.Category}</p>
+                            <p>Shipping: $${listing.Shipping}</p>
+                            <p>Status: ${'Active'}</p>     
+                            <p>Date Listed: ${new Date(listing.created_at).toLocaleString()}</p>
+                        </div>
+                    `;
+                    listingsContainer.appendChild(listingElement);
+                });
+            } else {
+                listingsContainer.innerHTML = '<p>You have no listings yet.</p>';
+            }
+            
+            viewListingsPopup.style.display = 'flex';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to fetch listings');
+        });
+    });
+
+    closeListingsPopup.addEventListener('click', function() {
+        viewListingsPopup.style.display = 'none';
+    });
+    
+    viewListingsPopup.addEventListener("click", (e) => {
+        if (e.target === viewListingsPopup) hidePopup(viewListingsPopup);
     });
 
     // View Orders Feature

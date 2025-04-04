@@ -37,9 +37,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Modified Route to handle image upload
 router.post('/listings', authenticateToken, upload.single('productImage'), async (req, res) => {
-    const { itemName, itemPrice, itemCategory, shippingCost } = req.body;
+    const { itemName, itemPrice, itemCategory, shippingCost, itemDescription } = req.body;
     const userId = req.user.userId;
     const imageFileName = req.file ? req.file.filename : null;
 
@@ -49,8 +48,8 @@ router.post('/listings', authenticateToken, upload.single('productImage'), async
 
     try {
         const [productResult] = await promisePool.query(
-            'INSERT INTO Product (Name, Price, Category, Shipping, image) VALUES (?, ?, ?, ?, ?)',
-            [itemName, itemPrice, itemCategory, shippingCost, imageFileName]
+            'INSERT INTO Product (Name, Price, Category, Shipping, image, description, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
+            [itemName, itemPrice, itemCategory, shippingCost, imageFileName, itemDescription]
         );
 
         const productId = productResult.insertId;
@@ -60,7 +59,11 @@ router.post('/listings', authenticateToken, upload.single('productImage'), async
             [1, itemPrice, userId, productId]
         );
 
-        res.status(201).json({ message: 'Listing added successfully', productId });
+        res.status(201).json({ 
+            message: 'Listing added successfully', 
+            productId,
+            createdAt: new Date().toISOString()
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -79,6 +82,24 @@ router.get('/listings', async (req, res) => {
         res.status(200).json({ products });
     } catch (error) {
         console.error('Error fetching listings:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.get('/listings/user', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+
+    try {
+        const [listings] = await promisePool.query(`
+            SELECT Product.*, Seller.StockQuantity
+            FROM Product 
+            JOIN Seller ON Product.Productid = Seller.Productid 
+            WHERE Seller.Userid = ?
+        `, [userId]);
+        
+        res.status(200).json({ listings });
+    } catch (error) {
+        console.error('Error fetching user listings:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

@@ -117,7 +117,8 @@ function fetchItems() {
                 shipping: item.Shipping,                
                 image: `/uploads/${item.image}`, 
                 category: item.Category,
-                seller: item.sellerName // Add seller name to the product object
+                seller: item.sellerName,
+                description: item.description || "No description available"
             }));
             return items;
         } else {
@@ -275,6 +276,10 @@ function renderProductPage() {
                 <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
                 <p><strong>Category:</strong> ${selectedItem.category}</p>
                 <p><strong>Seller:</strong> ${selectedItem.seller}</p>
+               <div class="product-description">
+                    <h3>Description</h3>
+                    <p>${selectedItem.description}</p>
+                </div>
                 <button id="buyNowBtn">Buy Now</button>
                 <button id="addToCartBtn">Add to Cart</button>
             </div>

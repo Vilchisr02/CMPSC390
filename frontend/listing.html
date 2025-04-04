@@ -75,6 +75,9 @@
                 <option value="Accessories">Accessories</option>
                 <option value="Home">Home</option>
             </select>
+            
+            <label for="itemDescription">Item Description:</label>
+            <textarea id="itemDescription" class="listing-input" rows="4" placeholder="Enter detailed description of your item"></textarea>
 
             <label>Shipping Method:</label>
             <div class="shipping-method">
@@ -87,7 +90,6 @@
             <label for="shippingCost">Shipping Cost:</label>
             <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
 
-            <!-- NEW IMAGE INPUT BELOW -->
             <label for="productImage">Product Image:</label>
             <input type="file" id="productImage" name="productImage" accept="image/*" required>
 
@@ -163,10 +165,11 @@
     </div>
 
     <div id="listingPopup" class="popup listing-popup">
-        <div class="popup-content listing-content">
-            <p>Your listing is confirmed!</p>
-            <button type="button" class="close-popup-btn">Back to Shopping</button>
-        </div>
+    <div class="popup-content listing-content">
+        <p>Your listing was created successfully!</p>
+        <p id="listingTimestamp"></p>
+        <button type="button" class="close-popup-btn">Back to Shopping</button>
     </div>
+</div>
 </body>
 </html>

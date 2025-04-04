@@ -33,6 +33,7 @@ if (window.location.pathname.includes("listing.html")) {
         const itemName = document.getElementById('itemName').value.trim();
         const itemPrice = parseFloat(document.getElementById('itemPrice').value.trim());
         const itemCategory = document.getElementById('itemCategory').value;
+        const itemDescription = document.getElementById('itemDescription').value.trim();
         const shippingCost = parseFloat(document.getElementById('shippingCost').value.trim());
         const productImage = document.getElementById('productImage');
         const token = localStorage.getItem('authToken');
@@ -54,6 +55,7 @@ if (window.location.pathname.includes("listing.html")) {
         formData.append('itemName', itemName);
         formData.append('itemPrice', itemPrice);
         formData.append('itemCategory', itemCategory);
+        formData.append('itemDescription', itemDescription);
         formData.append('shippingCost', shippingCost);
         formData.append('productImage', productImage.files[0]);
 
@@ -66,11 +68,21 @@ if (window.location.pathname.includes("listing.html")) {
         })
         .then(response => response.json())
         .then(data => {
+            const listingPopup = document.getElementById('listingPopup');
+            const timestampElement = document.getElementById('listingTimestamp');
+            
+            if (listingPopup && timestampElement) {
+                const now = new Date();
+                timestampElement.textContent = `Listed on: ${now.toLocaleString()}`;
+                listingPopup.style.display = 'flex';
+            }
+            
             listingPopup.style.display = 'flex';
             itemNameInput.value = '';
             itemPriceInput.value = '';
             shippingCostInput.value = '';
             productImage.value = '';
+            document.getElementById('itemDescription').value = '';
             shippingOptions.forEach(opt => opt.classList.remove('selected'));
         })
         .catch((error) => {
