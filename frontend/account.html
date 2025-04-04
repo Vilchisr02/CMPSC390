@@ -72,6 +72,7 @@
                 <button type="button" class="account-btn" id="setupPaymentBtn">Set Up Payment Method</button>
                 <button type="button" class="account-btn" id="viewPaymentBtn">View Payment Methods</button>
                 <button type="button" class="list-item-btn">List an Item</button>
+                <button type="button" class="account-btn" id="viewListingsBtn">View My Listings</button>
             </div>
         </section>
     </main>
@@ -190,11 +191,21 @@
         <div class="popup-content">
             <h2>Your Orders</h2>
             <div class="orders-list">
-                <!-- Orders will be dynamically inserted here -->
+                
             </div>
             <button type="button" class="popup-close">X</button>
         </div>
     </div>
+    
+    <div id="viewListingsPopup" class="popup">
+    <div class="popup-content">
+        <h2>My Listings</h2>
+        <div id="listingsContainer">
+            
+        </div>
+        <button type="button" class="popup-close">X</button>
+    </div>
+</div>
 
 </body>
 </html>
