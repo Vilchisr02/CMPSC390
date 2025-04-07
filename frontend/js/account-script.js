@@ -145,31 +145,84 @@ if (window.location.pathname.includes("account.html")) {
         displayOrders();
     });
 
-    function displayOrders() {
-        // Fetch orders from localStorage or an API
-        const orders = JSON.parse(localStorage.getItem("orders")) || [];
+function displayOrders() {
+    const container = document.querySelector("#viewOrdersPopup .orders-list");
+    container.innerHTML = "<p>Loading orders...</p>";
 
-        ordersListContainer.innerHTML = "";
+    fetch('/get-user-orders')
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to load orders");
+            return response.json();
+        })
+        .then(orders => {
+            container.innerHTML = "";
 
-        if (orders.length === 0) {
-            ordersListContainer.innerHTML = "<p>No orders found.</p>";
-            return;
-        }
+            if (!orders || orders.length === 0) {
+                container.innerHTML = "<p>No orders found.</p>";
+                return;
+            }
 
-        orders.forEach((order, index) => {
-            const orderItem = document.createElement("div");
-            orderItem.classList.add("order-item");
-            orderItem.innerHTML = `
-                <div class="order-details">
-                    <p><strong>Order ID:</strong> ${order.id}</p>
-                    <p><strong>Date:</strong> ${order.date}</p>
-                    <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
-                </div>
-                <div class="order-status">${order.status}</div>
-            `;
-            ordersListContainer.appendChild(orderItem);
+            orders.forEach(order => {
+                const div = document.createElement("div");
+                div.classList.add("order-entry");
+
+                div.innerHTML = `
+                    <p><strong>Order ID:</strong> ${order.order_id}</p>
+                    <p><strong>Date:</strong> ${new Date(order.Orderdate).toLocaleDateString()}</p>
+                    <p><strong>Total:</strong> $${parseFloat(order.TotalPrice).toFixed(2)}</p>
+                `;
+
+                const label = document.createElement("label");
+                label.textContent = "Status: ";
+
+                const select = document.createElement("select");
+                select.dataset.orderId = order.order_id;
+
+                ["processing", "shipped", "delivered"].forEach(status => {
+                    const option = document.createElement("option");
+                    option.value = status;
+                    option.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    if (order.Status === status) option.selected = true;
+                    select.appendChild(option);
+                });
+
+                select.addEventListener("change", (e) => {
+                    const newStatus = e.target.value;
+                    const orderId = e.target.dataset.orderId;
+
+                    fetch('/update-order-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ order_id: orderId, status: newStatus })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Order status updated.");
+                        } else {
+                            alert("Failed to update status.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error updating status:", err);
+                        alert("Error occurred.");
+                    });
+                });
+
+                div.appendChild(label);
+                div.appendChild(select);
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error("Error loading orders:", err);
+            container.innerHTML = "<p>Failed to load orders.</p>";
         });
-    }
+}
+
+
 
     viewOrdersPopup.addEventListener("click", (e) => {
         if (e.target === viewOrdersPopup) hidePopup(viewOrdersPopup);

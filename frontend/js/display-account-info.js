@@ -1,32 +1,19 @@
 // Check if the current page is account.html
 if (window.location.pathname.includes("account.html")) {
-    // Function to format phone number as (###) ###-####
+
     function formatPhoneNumber(phoneNumber) {
         if (!phoneNumber) return 'N/A';
-        // Remove any non-numeric characters
         const cleaned = ('' + phoneNumber).replace(/\D/g, '');
-        // Check if the input is of correct length
         if (cleaned.length !== 10) return 'N/A';
-        // Format the phone number
-        const part1 = cleaned.slice(0, 3);
-        const part2 = cleaned.slice(3, 6);
-        const part3 = cleaned.slice(6, 10);
-        return `(${part1}) ${part2}-${part3}`;
+        return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
     }
 
-    // Function to display user account information
     function displayUserInfo() {
-        // Get the user data from localStorage
         const userData = localStorage.getItem('user');
+        const userInfoContainer = document.querySelector('.user-info');
 
-        // Check if user data exists
-        if (userData) {
+        if (userData && userInfoContainer) {
             const user = JSON.parse(userData);
-
-            // Select the user info container
-            const userInfoContainer = document.querySelector('.user-info');
-
-            // Populate the user info container with user data
             userInfoContainer.innerHTML = `
                 <p><strong>First Name:</strong> ${user.Fname || 'N/A'}</p>
                 <p><strong>Last Name:</strong> ${user.Lname || 'N/A'}</p>
@@ -36,12 +23,59 @@ if (window.location.pathname.includes("account.html")) {
                 <p><strong>Phone Number:</strong> ${formatPhoneNumber(user.PhoneNumber) || 'N/A'}</p>
             `;
         } else {
-            // If no user data is found, display a message
-            const userInfoContainer = document.querySelector('.user-info');
             userInfoContainer.innerHTML = "<p>No user information found. Please sign in.</p>";
         }
     }
 
-    // Call the function to display user info when the page loads
-    document.addEventListener('DOMContentLoaded', displayUserInfo);
+    function setupOrderPopup() {
+        const viewOrdersBtn = document.getElementById('viewOrdersBtn');
+        const ordersListContainer = document.querySelector('.orders-list');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userId = user?.Userid;
+
+
+        if (!viewOrdersBtn || !ordersListContainer || !userId) return;
+
+viewOrdersBtn.addEventListener('click', () => {
+    fetch('/get-user-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(res => res.json())
+    .then(orders => {
+        ordersListContainer.innerHTML = '';
+
+        if (!orders.length) {
+            ordersListContainer.innerHTML = '<p>No orders found.</p>';
+        } else {
+            orders.forEach(order => {
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <p><strong>Order ID:</strong> ${order.OrderID}</p>
+                    <p><strong>Total:</strong> $${order.TotalPrice}</p>
+                    <p><strong>Status:</strong> ${order.Status}</p>
+                    <p><strong>Date:</strong> ${new Date(order.Orderdate).toLocaleDateString()}</p>
+                `;
+                ordersListContainer.appendChild(div);
+            });
+        }
+
+        // ✅ OPEN the popup (this was missing!)
+        document.getElementById('viewOrdersPopup').classList.add('active');
+    })
+    .catch(err => {
+        console.error('Error fetching user orders:', err);
+        ordersListContainer.innerHTML = '<p>Failed to load orders.</p>';
+    });
+});
+
+
+    // One unified DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+        displayUserInfo();
+        setupOrderPopup();
+    });
+}
 }

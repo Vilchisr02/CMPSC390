@@ -497,3 +497,40 @@ document.getElementById('showPasswordSignIn').addEventListener('change', functio
     }
 });
 
+document.querySelector('.checkout-btn').addEventListener('click', async () => {
+    const userId = localStorage.getItem('userId');
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+
+    if (!userId || cartItems.length === 0) {
+        alert('You must be logged in and have items in the cart.');
+        return;
+    }
+
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    try {
+        const response = await fetch('/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                buyer_id: userId,
+                total
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            localStorage.removeItem('cart'); // Clear cart
+            alert('Order placed successfully!');
+            window.location.href = 'account.html'; // Or any confirmation page
+        } else {
+            alert('Order failed: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Checkout error:', error);
+        alert('There was an error placing your order.');
+    }
+});
+
+

@@ -100,6 +100,12 @@ router.post('/signin', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
+        
+        req.session.user = {
+    id: user.Userid,
+    username: user.Username
+};
+
 
         // Return user data (excluding password) upon successful login
         const { password: _, ...userData } = user;
