@@ -10,7 +10,7 @@ const path = require('path');
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'Normal99!',
+    password: '----',
     database: 'eCommerceDB'
 });
 const promisePool = pool.promise();
