@@ -163,14 +163,30 @@ function displayOrders() {
             }
 
             orders.forEach(order => {
+                console.log("ORDER DEBUG:", order);
                 const div = document.createElement("div");
                 div.classList.add("order-entry");
 
                 div.innerHTML = `
-                    <p><strong>Order ID:</strong> ${order.order_id}</p>
+                    <p><strong>Order ID:</strong> ${order.Transactionid}</p>
                     <p><strong>Date:</strong> ${new Date(order.Orderdate).toLocaleDateString()}</p>
                     <p><strong>Total:</strong> $${parseFloat(order.TotalPrice).toFixed(2)}</p>
                 `;
+                
+                if (order.items && order.items.length > 0) {
+    const itemList = document.createElement("ul");
+    order.items.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.Name} — $${parseFloat(item.Totalprice).toFixed(2)}`;
+        itemList.appendChild(li);
+    });
+
+    const label = document.createElement("p");
+    label.innerHTML = "<strong>Items:</strong>";
+    div.appendChild(label);
+    div.appendChild(itemList);
+}
+
 
                 const label = document.createElement("label");
                 label.textContent = "Status: ";

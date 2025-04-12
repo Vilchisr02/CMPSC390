@@ -38,9 +38,23 @@ router.get('/get-user-orders', async (req, res) => {
 
     try {
         const [orders] = await promisePool.query(
-            'SELECT * FROM Orders WHERE Userid = ?',
+            'SELECT * FROM Orders WHERE Userid = ? ORDER BY Orderdate DESC',
             [user_id]
         );
+
+
+        for (let order of orders) {
+            const [items] = await promisePool.query(
+                `SELECT P.Name, P.Price, I.Totalprice
+                 FROM Includes I
+                 JOIN Product P ON I.Productid = P.Productid
+                 WHERE I.Transactionid = ?`,
+                [order.Transactionid]
+            );
+            order.items = items;
+        }
+        
+        
         res.json(orders);
     } catch (err) {
         console.error("MySQL fetch error:", err);
