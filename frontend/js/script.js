@@ -12,6 +12,10 @@ const closePopupBtn = document.querySelector(".close-popup-btn");
 const searchBar = document.getElementById("searchBar");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
 
+// API Endpoints
+const cartSaveEndpoint = '/cart/save';
+const cartGetEndpoint = '/cart';
+
 function filterItemsBySearch(searchTerm) {
     const itemContainer = document.getElementById("itemContainer");
     if (!itemContainer) return;
@@ -74,23 +78,73 @@ burgerMenu.addEventListener('click', () => {
     mainNav.classList.toggle('active');
 });
 
-// Load/Save Cart Functions
-function saveCartToLocalStorage() {
-    localStorage.setItem("cart", JSON.stringify(cart));
+// Cart Storage Functions
+async function saveCartToStorage() {
+    const authToken = localStorage.getItem('authToken');
+    // Ensure we're extracting just the numeric ID part
+    const cartItems = cart.map(item => ({
+        id: item.id.replace('item', ''),
+        quantity: item.quantity
+    }));
+    
+    if (authToken) {
+        try {
+            await fetch(cartSaveEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ items: cartItems })
+            });
+        } catch (error) {
+            console.error('Error saving cart to server:', error);
+        }
+    } else {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
 }
 
-function loadCartFromLocalStorage() {
-    try {
-        const savedCart = localStorage.getItem("cart");
-        return savedCart ? JSON.parse(savedCart) : [];
-    } catch {
-        return [];
+async function loadCartFromStorage() {
+    const authToken = localStorage.getItem('authToken');
+    
+    if (authToken) {
+        try {
+            const response = await fetch(cartGetEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return data.items || [];
+            }
+            return [];
+        } catch (error) {
+            console.error('Error loading cart from server:', error);
+            return [];
+        }
+    } else {
+        // Guest - load from localStorage
+        try {
+            const savedCart = localStorage.getItem("cart");
+            return savedCart ? JSON.parse(savedCart) : [];
+        } catch {
+            return [];
+        }
     }
 }
 
 // Cart Logic
-const cart = loadCartFromLocalStorage();
-updateCartDisplay();
+let cart = [];
+async function initializeCart() {
+    cart = await loadCartFromStorage();
+    updateCartDisplay();
+}
+initializeCart();
 
 // Product Items
 let items = [];
@@ -116,7 +170,9 @@ function fetchItems() {
                 price: item.Price,
                 shipping: item.Shipping,                
                 image: `/uploads/${item.image}`, 
-                category: item.Category
+                category: item.Category,
+                seller: item.sellerName,
+                description: item.description || "No description available"
             }));
             return items;
         } else {
@@ -191,26 +247,26 @@ document.querySelectorAll(".category-btn").forEach(button => {
 });
 
 // Add to Cart
-function addItemToCart(item) {
+async function addItemToCart(item) {
     const existingItem = cart.find(cartItem => cartItem.id === item.id);
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
         cart.push({ ...item, quantity: 1 });
     }
-    saveCartToLocalStorage();
+    await saveCartToStorage();
     updateCartDisplay();
 }
 
 // Remove from Cart
-function removeItemFromCart(itemIndex) {
+async function removeItemFromCart(itemIndex) {
     const item = cart[itemIndex];
     if (item.quantity > 1) {
         item.quantity -= 1;
     } else {
         cart.splice(itemIndex, 1);
     }
-    saveCartToLocalStorage();
+    await saveCartToStorage();
     updateCartDisplay();
 }
 
@@ -273,7 +329,11 @@ function renderProductPage() {
                 <p><strong>Price:</strong> $${selectedItem.price.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
                 <p><strong>Category:</strong> ${selectedItem.category}</p>
-                <p><strong>Seller:</strong> Placeholder Seller</p>
+                <p><strong>Seller:</strong> ${selectedItem.seller}</p>
+                <div class="product-description">
+                    <h3>Description</h3>
+                    <p>${selectedItem.description}</p>
+                </div>
                 <button id="buyNowBtn">Buy Now</button>
                 <button id="addToCartBtn">Add to Cart</button>
             </div>
@@ -365,7 +425,7 @@ function renderCheckoutPage() {
                 saveOrder(order);
 
                 cart.length = 0;
-                saveCartToLocalStorage();
+                saveCartToStorage();
 
                 // Show confirmation message
                 const arrivalDate = getExpectedArrivalDate();
@@ -414,7 +474,7 @@ function renderCheckoutPage() {
             `;
 
             cart.length = 0;
-            saveCartToLocalStorage();
+            saveCartToStorage();
         });
     }
 }
@@ -497,6 +557,7 @@ document.getElementById('showPasswordSignIn').addEventListener('change', functio
     }
 });
 
+
 document.querySelector('.checkout-btn').addEventListener('click', async () => {
     const userId = localStorage.getItem('userId');
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -532,5 +593,4 @@ document.querySelector('.checkout-btn').addEventListener('click', async () => {
         alert('There was an error placing your order.');
     }
 });
-
 

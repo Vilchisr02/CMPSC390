@@ -97,3 +97,13 @@ label {
 .post-listing-btn:hover {
     background-color: #45a049;
 }
+
+#itemDescription {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}

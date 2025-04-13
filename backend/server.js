@@ -3,10 +3,14 @@ const path = require('path');
 const authRoutes = require('./auth');
 const paymentRoutes = require('./payment');
 const listingRoutes = require('./listing');
+<<<<<<< HEAD
 const orderRoutes = require('./order');
 const session = require('express-session');
 
 
+=======
+const cartRoutes = require('./cart');
+>>>>>>> origin/Eric-New
 
 const app = express();
 const PORT = 3000;
@@ -30,8 +34,12 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/auth', authRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/listing', listingRoutes);
+<<<<<<< HEAD
 app.use('/', require('./order'));
 
+=======
+app.use('/cart', cartRoutes);
+>>>>>>> origin/Eric-New
 
 app.get('/', (req, res) => {
     res.send("Hello World!");

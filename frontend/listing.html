@@ -60,43 +60,41 @@
 
     <main class="listing-container">
         <div class="listing-form">
-            <div class="image-upload">
-                <div class="image-placeholder"></div>
+          <form class="listing-details" enctype="multipart/form-data">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" class="listing-input" placeholder="Enter item name">
+
+            <label for="itemPrice">Item Price:</label>
+            <input type="number" id="itemPrice" class="listing-input" placeholder="Enter item price">
+
+            <label for="itemCategory">Category:</label>
+            <select id="itemCategory" class="listing-input">
+                <option value="Electronics">Electronics</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Home">Home</option>
+            </select>
+            
+            <label for="itemDescription">Item Description:</label>
+            <textarea id="itemDescription" class="listing-input" rows="4" placeholder="Enter detailed description of your item"></textarea>
+
+            <label>Shipping Method:</label>
+            <div class="shipping-method">
+                <button class="shipping-option">USPS</button>
+                <button class="shipping-option">FedEx</button>
+                <button class="shipping-option">UPS</button>
+                <button class="shipping-option">In-Person</button>
             </div>
-            <form class="listing-details" enctype="multipart/form-data">
-    <label for="itemName">Item Name:</label>
-    <input type="text" id="itemName" class="listing-input" placeholder="Enter item name">
 
-    <label for="itemPrice">Item Price:</label>
-    <input type="number" id="itemPrice" class="listing-input" placeholder="Enter item price">
+            <label for="shippingCost">Shipping Cost:</label>
+            <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
 
-    <label for="itemCategory">Category:</label>
-    <select id="itemCategory" class="listing-input">
-        <option value="Electronics">Electronics</option>
-        <option value="Gaming">Gaming</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Accessories">Accessories</option>
-        <option value="Home">Home</option>
-    </select>
+            <label for="productImage">Product Image:</label>
+            <input type="file" id="productImage" name="productImage" accept="image/*" required>
 
-    <label>Shipping Method:</label>
-    <div class="shipping-method">
-        <button class="shipping-option">USPS</button>
-        <button class="shipping-option">FedEx</button>
-        <button class="shipping-option">UPS</button>
-        <button class="shipping-option">In-Person</button>
-    </div>
-
-    <label for="shippingCost">Shipping Cost:</label>
-    <input type="number" id="shippingCost" class="listing-input" placeholder="Enter shipping cost">
-
-    <!-- NEW IMAGE INPUT BELOW -->
-    <label for="productImage">Product Image:</label>
-    <input type="file" id="productImage" name="productImage" accept="image/*" required>
-
-    <button type="button" class="post-listing-btn">Post Listing</button>
-</form>
-
+            <button type="button" class="post-listing-btn">Post Listing</button>
+          </form>
         </div>
     </main>
 
@@ -167,10 +165,11 @@
     </div>
 
     <div id="listingPopup" class="popup listing-popup">
-        <div class="popup-content listing-content">
-            <p>Your listing is confirmed!</p>
-            <button type="button" class="close-popup-btn">Back to Shopping</button>
-        </div>
+    <div class="popup-content listing-content">
+        <p>Your listing was created successfully!</p>
+        <p id="listingTimestamp"></p>
+        <button type="button" class="close-popup-btn">Back to Shopping</button>
     </div>
+</div>
 </body>
 </html>
