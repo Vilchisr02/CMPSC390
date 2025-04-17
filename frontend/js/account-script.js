@@ -208,30 +208,73 @@ if (window.location.pathname.includes("account.html")) {
         displayOrders();
     });
 
-    function displayOrders() {
-        // Fetch orders from localStorage or an API
-        const orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-        ordersListContainer.innerHTML = "";
-
-        if (orders.length === 0) {
-            ordersListContainer.innerHTML = "<p>No orders found.</p>";
+    async function displayOrders() {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            ordersListContainer.innerHTML = "<p>Please sign in to view your orders</p>";
             return;
         }
 
-        orders.forEach((order, index) => {
-            const orderItem = document.createElement("div");
-            orderItem.classList.add("order-item");
-            orderItem.innerHTML = `
-                <div class="order-details">
-                    <p><strong>Order ID:</strong> ${order.id}</p>
-                    <p><strong>Date:</strong> ${order.date}</p>
-                    <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
-                </div>
-                <div class="order-status">${order.status}</div>
-            `;
-            ordersListContainer.appendChild(orderItem);
+        const response = await fetch('/orders/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+
+        const data = await response.json();
+            if (response.ok) {
+                const orders = data.orders || [];
+
+                ordersListContainer.innerHTML = "";
+
+                if (orders.length === 0) {
+                    ordersListContainer.innerHTML = "<p>No orders found.</p>";
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const orderItem = document.createElement("div");
+                    orderItem.classList.add("order-item");
+                    
+                    // Convert TotalPrice to number if it's not already
+                    const totalPrice = typeof order.TotalPrice === 'string' ? 
+                        parseFloat(order.TotalPrice) : 
+                        order.TotalPrice;
+                    
+                    orderItem.innerHTML = `
+                        <div class="order-details">
+                            <p><strong>Order ID:</strong> ${order.Transactionid}</p>
+                            <p><strong>Date:</strong> ${new Date(order.Orderdate).toLocaleDateString()}</p>
+                            <p><strong>Total:</strong> $${totalPrice.toFixed(2)}</p>
+                            <p><strong>Payment:</strong> **** **** **** ${order.CardNumber?.slice(-4) || 'N/A'}</p>
+                            <div class="order-items">
+                                ${order.items.map(item => {
+                                    // Convert item total to number if needed
+                                    const itemTotal = typeof item.total === 'string' ? 
+                                        parseFloat(item.total) : 
+                                        item.total;
+                                    return `
+                                        <div class="order-item-product">
+                                            <img src="${item.image}" alt="${item.name}" width="50">
+                                            <span>${item.name} ($${itemTotal.toFixed(2)})</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="order-status">${order.Status}</div>
+                    `;
+                    ordersListContainer.appendChild(orderItem);
+                });
+            } else {
+                ordersListContainer.innerHTML = `<p>${data.message || "Failed to load orders"}</p>`;
+            }
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            ordersListContainer.innerHTML = "<p>Error loading orders</p>";
+        }
     }
 
     viewOrdersPopup.addEventListener("click", (e) => {

@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: '----',
+    password: 'Normal99!',
     database: 'eCommerceDB'
 });
 const promisePool = pool.promise();

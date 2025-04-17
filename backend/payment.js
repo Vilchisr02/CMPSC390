@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root', // Replace with your MySQL username
-    password: '----', // Replace with your MySQL password
+    password: 'Normal99!', // Replace with your MySQL password
     database: 'eCommerceDB', // Replace with your database name
     waitForConnections: true,
     connectionLimit: 10,
@@ -25,21 +25,49 @@ const promisePool = pool.promise();
 const JWT_SECRET = 'your-secret-key';
 
 // Middleware to authenticate user using JWT
-const authenticateUser = (req, res, next) => {
-    const token = req.headers.authorization;
-
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided' });
-    }
-
+const authenticateUser = async (req, res, next) => {
     try {
-        // Verify the JWT token
+        const authHeader = req.headers['authorization'];
+        
+        if (!authHeader) {
+            return res.status(401).json({ message: 'Authorization header missing' });
+        }
+
+        // Check if header is in format "Bearer <token>"
+        const tokenParts = authHeader.split(' ');
+        if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+            return res.status(401).json({ message: 'Invalid authorization format. Use: Bearer <token>' });
+        }
+
+        const token = tokenParts[1];
+        
+        // Verify the token
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.userId = decoded.userId; // Attach the user ID to the request object
+        
+        // Verify the user exists in database
+        const [users] = await promisePool.query(
+            'SELECT Userid FROM Users WHERE Userid = ?',
+            [decoded.userId]
+        );
+        
+        if (users.length === 0) {
+            return res.status(401).json({ message: 'User not found' });
+        }
+
+        // Attach user information to the request
+        req.userId = decoded.userId;
         next();
     } catch (error) {
-        console.error('Error verifying token:', error);
-        res.status(401).json({ message: 'Unauthorized: Invalid token' });
+        console.error('Authentication error:', error);
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' });
+        }
+        
+        res.status(500).json({ message: 'Authentication failed' });
     }
 };
 

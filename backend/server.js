@@ -4,6 +4,7 @@ const authRoutes = require('./auth');
 const paymentRoutes = require('./payment');
 const listingRoutes = require('./listing');
 const cartRoutes = require('./cart');
+const orderRoutes = require('./orders');
 
 const app = express();
 const PORT = 3000;
@@ -12,14 +13,12 @@ const PORT = 3000;
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../frontend')));
-
-
-
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/auth', authRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/listing', listingRoutes);
 app.use('/cart', cartRoutes);
+app.use('/orders', orderRoutes);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
@@ -28,4 +27,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-

@@ -191,7 +191,8 @@ fetchItems().then(fetchedItems => {
     initializeApp();
 });
 
-function initializeApp() {
+async function initializeApp() {
+    await fetchItems();
     filterItemsByCategory("all");
     updateCartDisplay();
 
@@ -200,6 +201,15 @@ function initializeApp() {
     }
 
     if (window.location.pathname.includes("checkout.html")) {
+        // Load payment methods for checkout page
+        const paymentMethods = await fetchPaymentMethods();
+        renderPaymentMethods(paymentMethods);
+        
+        // Add new payment method button
+        document.getElementById('addNewPaymentBtn')?.addEventListener('click', () => {
+            window.location.href = 'account.html#setupPaymentPopup';
+        });
+        
         renderCheckoutPage();
     }
 }
@@ -349,14 +359,64 @@ function renderProductPage() {
         });
 
         function redirectToCheckout(items) {
-            localStorage.setItem("checkoutItems", JSON.stringify(items));
-            window.location.href = "checkout.html";
+            window.location.href = `checkout.html?buyNow=${encodeURIComponent(productId)}`;
         }
 
     } else if (productPage) {
         productPage.innerHTML = "<p>Product not found</p>";
     }
 }
+
+async function fetchPaymentMethods() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return [];
+
+    try {
+        const response = await fetch('/payment/view-payments', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        return response.ok ? data.paymentMethods : [];
+    } catch (error) {
+        console.error('Error fetching payment methods:', error);
+        return [];
+    }
+}
+
+function renderPaymentMethods(paymentMethods) {
+    const container = document.querySelector('.payment-methods-container');
+    if (!container) return;
+
+    if (paymentMethods.length === 0) {
+        container.innerHTML = '<p class="no-payment-methods">No payment methods saved. Please add one.</p>';
+        return;
+    }
+
+    container.innerHTML = paymentMethods.map(method => `
+        <label class="payment-method-option">
+            <input type="radio" name="paymentMethod" value="${method.PaymentID}" required>
+            <div class="payment-method-details">
+                <p><strong>${method.CardholderName}</strong></p>
+                <p>**** **** **** ${method.CardNumber.slice(-4)}</p>
+                <p>Expires: ${method.ExpirationDate}</p>
+            </div>
+        </label>
+    `).join('');
+
+    // Add event listeners to style selected payment method
+    document.querySelectorAll('.payment-method-option input').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-method-option').forEach(option => {
+                option.classList.toggle('selected', option.contains(this));
+            });
+        });
+    });
+}
+
 
 // Checkout Feature
 function renderCheckoutPage() {
@@ -407,48 +467,88 @@ function renderCheckoutPage() {
         return arrivalDate.toLocaleDateString();
     }
 
-    if (confirmOrderBtn) {
-        confirmOrderBtn.addEventListener("click", () => {
+   if (confirmOrderBtn) {
+        confirmOrderBtn.addEventListener("click", async () => {
             if (cart.length === 0) {
                 alert("Your cart is empty. Add items before confirming your order.");
-            } else {
-                // Create an order object
-                const order = {
-                    id: generateOrderId(), // Generate a unique order ID
-                    date: new Date().toLocaleDateString(), // Current date
-                    items: [...cart], // Copy cart items
-                    total: calculateOrderTotal(cart), // Calculate total
-                    status: "Processing", // Default status
-                };
+                return;
+            }
 
-                // Save the order to localStorage
-                saveOrder(order);
+            const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!selectedPaymentMethod) {
+                alert("Please select a payment method before confirming your order.");
+                return;
+            }
 
-                cart.length = 0;
-                saveCartToStorage();
+            const paymentId = selectedPaymentMethod.value;
 
-                // Show confirmation message
-                const arrivalDate = getExpectedArrivalDate();
-                orderConfirmationMessage.textContent = `Order Confirmed! Order ID: ${order.id}. Expected Arrival: ${arrivalDate}`;
-                orderConfirmationPopup.classList.add("show");
+            try {
+                const authToken = localStorage.getItem('authToken');
+                if (!authToken) {
+                    alert("Please sign in to complete your order");
+                    return;
+                }
 
-                // Redirect to account page after a delay
-                setTimeout(() => {
-                    orderConfirmationPopup.classList.remove("show");
-                    window.location.href = "account.html"; // Redirect to account page
-                }, 3000);
+                // Calculate all amounts
+                const subtotal = calculateSubtotal(cart);
+                const taxRate = 0.07;
+                const tax = subtotal * taxRate;
+                const total = subtotal + tax;
+
+                const response = await fetch('/orders/create', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        items: cart, 
+                        subtotal,
+                        tax,
+                        total,
+                        paymentId 
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    // Show confirmation message
+                    const arrivalDate = getExpectedArrivalDate();
+                    orderConfirmationMessage.textContent = `Order Confirmed! Order ID: ${data.orderId}. Expected Arrival: ${arrivalDate}`;
+                    orderConfirmationPopup.classList.add("show");
+
+                    // Clear cart
+                    cart.length = 0;
+                    await saveCartToStorage();
+
+                    // Redirect to account page after a delay
+                    setTimeout(() => {
+                        orderConfirmationPopup.classList.remove("show");
+                        window.location.href = "account.html";
+                    }, 3000);
+                } else {
+                    alert(data.message || "Failed to create order");
+                }
+            } catch (error) {
+                console.error('Error creating order:', error);
+                alert("Failed to create order");
             }
         });
     }
-
+    
     // Function to generate a unique order ID
     function generateOrderId() {
         return `ORD${Math.floor(Math.random() * 1000000)}`;
     }
 
-    // Function to calculate the total order amount
+    // Functions to calculate the total order amount
     function calculateOrderTotal(cart) {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+    
+    function calculateSubtotal(cartItems) {
+        return cartItems.reduce((sum, item) => {
+            return sum + (item.price * item.quantity) + (item.shipping * item.quantity);
+        }, 0);
     }
 
     // Function to save the order to localStorage
