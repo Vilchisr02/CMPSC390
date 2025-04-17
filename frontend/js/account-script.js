@@ -57,7 +57,7 @@ if (window.location.pathname.includes("account.html")) {
             const response = await fetch('/payment/view-payments', {
                 method: 'GET',
                 headers: {
-                    'Authorization': token // Send the JWT token in the Authorization header
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
@@ -77,7 +77,7 @@ if (window.location.pathname.includes("account.html")) {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': token // Send the JWT token in the Authorization header
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({ cardNumber, expirationDate, cvv, cardholderName })
                 });
@@ -104,7 +104,7 @@ if (window.location.pathname.includes("account.html")) {
             const response = await fetch('/payment/view-payments', {
                 method: 'GET',
                 headers: {
-                    'Authorization': token
+                    'Authorization': `Bearer ${token}`
                 }
             });
 

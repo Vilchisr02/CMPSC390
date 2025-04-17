@@ -354,14 +354,9 @@ function renderProductPage() {
         });
 
         document.getElementById("buyNowBtn").addEventListener("click", () => {
-            addItemToCart(selectedItem);
-            redirectToCheckout([selectedItem]);
+            localStorage.setItem("buyNowItem", JSON.stringify(selectedItem));
+            window.location.href = "checkout.html";
         });
-
-        function redirectToCheckout(items) {
-            window.location.href = `checkout.html?buyNow=${encodeURIComponent(productId)}`;
-        }
-
     } else if (productPage) {
         productPage.innerHTML = "<p>Product not found</p>";
     }
@@ -425,11 +420,20 @@ function renderCheckoutPage() {
     const orderConfirmationPopup = document.getElementById("orderConfirmationPopup");
     const orderConfirmationMessage = document.getElementById("orderConfirmationMessage");
     const confirmOrderBtn = document.querySelector(".confirm-order-btn");
+    
+    const buyNowItem = JSON.parse(localStorage.getItem("buyNowItem"));
+
+    if (buyNowItem) {
+        cart = [{ ...buyNowItem, quantity: 1 }];
+        localStorage.removeItem("buyNowItem");
+    }
 
     if (checkoutCartContainer && orderSummaryContainer) {
         let totalPrice = 0;
         let totalShipping = 0;
         const taxRate = 0.07;
+        
+        checkoutCartContainer.innerHTML = "";
 
         cart.forEach(item => {
             const cartItem = document.createElement("div");
@@ -458,6 +462,28 @@ function renderCheckoutPage() {
             <p><strong>Tax (7%):</strong> $${tax.toFixed(2)}</p>
             <p><strong>Total:</strong> $${total.toFixed(2)}</p>
         `;
+    }
+    
+    const userData = localStorage.getItem('user');
+    if (userData) {
+        const user = JSON.parse(userData);
+        const shipToName = document.getElementById('shipToName');
+        const shipToAddress = document.getElementById('shipToAddress');
+        
+        if (shipToName) {
+            shipToName.textContent = `${user.Fname || ''} ${user.Lname || ''}`.trim() || 'Not provided';
+        }
+        
+        if (shipToAddress) {
+            shipToAddress.textContent = user.Address || 'Not provided';
+        }
+    } else {
+        // If no user is logged in, show a message
+        const shipToName = document.getElementById('shipToName');
+        const shipToAddress = document.getElementById('shipToAddress');
+        
+        if (shipToName) shipToName.textContent = 'Please sign in';
+        if (shipToAddress) shipToAddress.textContent = 'Please sign in to see your address';
     }
 
     function getExpectedArrivalDate() {
