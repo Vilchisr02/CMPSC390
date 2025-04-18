@@ -38,11 +38,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post('/listings', authenticateToken, upload.single('productImage'), async (req, res) => {
-    const { itemName, itemPrice, itemCategory, shippingCost, itemDescription } = req.body;
+    const { itemName, itemPrice, itemQuantity, itemCategory, shippingCost, itemDescription } = req.body;
     const userId = req.user.userId;
     const imageFileName = req.file ? req.file.filename : null;
 
-    if (!itemName || !itemPrice || !itemCategory || !shippingCost || !imageFileName) {
+    if (!itemName || !itemPrice || !itemQuantity || !itemCategory || !shippingCost || !imageFileName) {
         return res.status(400).json({ message: 'All fields including image are required' });
     }
 
@@ -56,7 +56,7 @@ router.post('/listings', authenticateToken, upload.single('productImage'), async
 
         await promisePool.query(
             'INSERT INTO Seller (StockQuantity, Price, Userid, Productid) VALUES (?, ?, ?, ?)',
-            [1, itemPrice, userId, productId]
+            [itemQuantity, itemPrice, userId, productId]
         );
 
         res.status(201).json({ 
@@ -72,9 +72,8 @@ router.post('/listings', authenticateToken, upload.single('productImage'), async
 
 router.get('/listings', async (req, res) => {
     try {
-        // Fetch all products from the Product table along with the seller's name
         const [products] = await promisePool.query(`
-            SELECT Product.*, Users.Username AS sellerName 
+            SELECT Product.*, Seller.StockQuantity, Users.Username AS sellerName 
             FROM Product 
             JOIN Seller ON Product.Productid = Seller.Productid 
             JOIN Users ON Seller.Userid = Users.Userid
@@ -83,6 +82,46 @@ router.get('/listings', async (req, res) => {
     } catch (error) {
         console.error('Error fetching listings:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.post('/update-stock', authenticateToken, async (req, res) => {
+    const { items } = req.body;
+    
+    try {
+        if (!items || !Array.isArray(items)) {
+            return res.status(400).json({ message: 'Invalid items array' });
+        }
+
+        await promisePool.query('START TRANSACTION');
+
+        for (const item of items) {
+            // Decrease stock quantity
+            await promisePool.query(
+                'UPDATE Seller SET StockQuantity = StockQuantity - ? WHERE Productid = ?',
+                [item.quantity, item.id]
+            );
+            
+            // Verify stock didn't go negative
+            const [product] = await promisePool.query(
+                'SELECT StockQuantity FROM Seller WHERE Productid = ?',
+                [item.id]
+            );
+            
+            if (product[0].StockQuantity < 0) {
+                await promisePool.query('ROLLBACK');
+                return res.status(400).json({ 
+                    message: `Insufficient stock for product ${item.id}` 
+                });
+            }
+        }
+
+        await promisePool.query('COMMIT');
+        res.status(200).json({ message: 'Stock updated successfully' });
+    } catch (error) {
+        await promisePool.query('ROLLBACK');
+        console.error('Error updating stock:', error);
+        res.status(500).json({ message: 'Error updating stock' });
     }
 });
 

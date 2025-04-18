@@ -51,6 +51,26 @@ router.post('/save', authenticateToken, async (req, res) => {
         }
 
         await promisePool.query('START TRANSACTION');
+        
+        // First validate stock for all items
+        for (const item of items) {
+            const [product] = await promisePool.query(
+                'SELECT p.Productid, s.StockQuantity FROM Product p JOIN Seller s ON p.Productid = s.Productid WHERE p.Productid = ?',
+                [item.id]
+            );
+            
+            if (product.length === 0) {
+                await promisePool.query('ROLLBACK');
+                return res.status(400).json({ message: `Product ${item.id} not found` });
+            }
+            
+            if (product[0].StockQuantity < item.quantity) {
+                await promisePool.query('ROLLBACK');
+                return res.status(400).json({ 
+                    message: `Not enough stock for product ${item.id}. Available: ${product[0].StockQuantity}` 
+                });
+            }
+        }
 
         // Get or create cart
         const [existingCart] = await promisePool.query(
@@ -76,14 +96,9 @@ router.post('/save', authenticateToken, async (req, res) => {
         // Add items with validation
         if (items.length > 0) {
             for (const item of items) {
-                if (!item.id || isNaN(item.id)) {
-                    await promisePool.query('ROLLBACK');
-                    return res.status(400).json({ message: 'Invalid product ID' });
-                }
-                
                 await promisePool.query(
                     'INSERT INTO Added_to (Productid, Cartid, Quantity) VALUES (?, ?, ?)',
-                    [item.id, cartId, item.quantity || 1] // Default to 1 if quantity missing
+                    [item.id, cartId, item.quantity || 1]
                 );
             }
         }

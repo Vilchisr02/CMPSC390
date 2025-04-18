@@ -209,21 +209,21 @@ if (window.location.pathname.includes("account.html")) {
     });
 
     async function displayOrders() {
-    try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            ordersListContainer.innerHTML = "<p>Please sign in to view your orders</p>";
-            return;
-        }
-
-        const response = await fetch('/orders/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                ordersListContainer.innerHTML = "<p>Please sign in to view your orders</p>";
+                return;
             }
-        });
 
-        const data = await response.json();
+            const response = await fetch('/orders/user', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
             if (response.ok) {
                 const orders = data.orders || [];
 
@@ -243,11 +243,28 @@ if (window.location.pathname.includes("account.html")) {
                         parseFloat(order.TotalPrice) : 
                         order.TotalPrice;
                     
+                    // Add status-specific styling
+                    let statusClass = '';
+                    switch(order.Status.toLowerCase()) {
+                        case 'processing':
+                            statusClass = 'status-processing';
+                            break;
+                        case 'shipped':
+                            statusClass = 'status-shipped';
+                            break;
+                        case 'delivered':
+                            statusClass = 'status-delivered';
+                            break;
+                        default:
+                            statusClass = 'status-default';
+                    }
+                    
                     orderItem.innerHTML = `
                         <div class="order-details">
                             <p><strong>Order ID:</strong> ${order.Transactionid}</p>
                             <p><strong>Date:</strong> ${new Date(order.Orderdate).toLocaleDateString()}</p>
                             <p><strong>Total:</strong> $${totalPrice.toFixed(2)}</p>
+                            <p><strong>Items:</strong> ${order.TotalQuantity}</p>
                             <p><strong>Payment:</strong> **** **** **** ${order.CardNumber?.slice(-4) || 'N/A'}</p>
                             <div class="order-items">
                                 ${order.items.map(item => {
@@ -258,13 +275,16 @@ if (window.location.pathname.includes("account.html")) {
                                     return `
                                         <div class="order-item-product">
                                             <img src="${item.image}" alt="${item.name}" width="50">
-                                            <span>${item.name} ($${itemTotal.toFixed(2)})</span>
+                                            <span>
+                                                ${item.name} 
+                                                (${item.quantity} × $${item.price.toFixed(2)} = $${itemTotal.toFixed(2)})
+                                            </span>
                                         </div>
                                     `;
                                 }).join('')}
                             </div>
                         </div>
-                        <div class="order-status">${order.Status}</div>
+                        <div class="order-status ${statusClass}">${order.Status}</div>
                     `;
                     ordersListContainer.appendChild(orderItem);
                 });
@@ -277,11 +297,24 @@ if (window.location.pathname.includes("account.html")) {
         }
     }
 
-    viewOrdersPopup.addEventListener("click", (e) => {
-        if (e.target === viewOrdersPopup) hidePopup(viewOrdersPopup);
+    let ordersRefreshInterval;
+
+    viewOrdersBtn.addEventListener("click", () => {
+        showPopup(viewOrdersPopup);
+        displayOrders();
+        // Refresh orders every 5 seconds while popup is open
+        ordersRefreshInterval = setInterval(displayOrders, 5000);
     });
 
     document.querySelector("#viewOrdersPopup .popup-close").addEventListener("click", () => {
         hidePopup(viewOrdersPopup);
+        clearInterval(ordersRefreshInterval);
+    });
+
+    viewOrdersPopup.addEventListener("click", (e) => {
+        if (e.target === viewOrdersPopup) {
+            hidePopup(viewOrdersPopup);
+            clearInterval(ordersRefreshInterval);
+        }
     });
 }
