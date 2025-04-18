@@ -32,14 +32,16 @@ if (window.location.pathname.includes("listing.html")) {
     postListingBtn.addEventListener('click', function () {
         const itemName = document.getElementById('itemName').value.trim();
         const itemPrice = parseFloat(document.getElementById('itemPrice').value.trim());
+        const itemQuantity = parseInt(document.getElementById('itemQuantity').value.trim());
         const itemCategory = document.getElementById('itemCategory').value;
         const itemDescription = document.getElementById('itemDescription').value.trim();
         const shippingCost = parseFloat(document.getElementById('shippingCost').value.trim());
         const productImage = document.getElementById('productImage');
         const token = localStorage.getItem('authToken');
 
-        // Check if fields and image are provided
-        if (!itemName || isNaN(itemPrice) || !itemCategory || isNaN(shippingCost) || !selectedShippingMethod) {
+        // Check if fields and image are provided (updated to include quantity)
+        if (!itemName || isNaN(itemPrice) || isNaN(itemQuantity) || itemQuantity < 1 || 
+            !itemCategory || isNaN(shippingCost) || !selectedShippingMethod) {
             alert("Please fill in all fields correctly!");
             return;
         }
@@ -54,11 +56,13 @@ if (window.location.pathname.includes("listing.html")) {
         const formData = new FormData();
         formData.append('itemName', itemName);
         formData.append('itemPrice', itemPrice);
+        formData.append('itemQuantity', itemQuantity);
         formData.append('itemCategory', itemCategory);
         formData.append('itemDescription', itemDescription);
         formData.append('shippingCost', shippingCost);
         formData.append('productImage', productImage.files[0]);
 
+        // Rest of the fetch code remains the same...
         fetch('/listing/listings', {
             method: 'POST',
             headers: {
@@ -83,6 +87,7 @@ if (window.location.pathname.includes("listing.html")) {
             shippingCostInput.value = '';
             productImage.value = '';
             document.getElementById('itemDescription').value = '';
+            document.getElementById('itemQuantity').value = '';
             shippingOptions.forEach(opt => opt.classList.remove('selected'));
         })
         .catch((error) => {
@@ -94,5 +99,4 @@ if (window.location.pathname.includes("listing.html")) {
     closePopupBtn.addEventListener('click', function() {
         listingPopupBtn.style.display = 'none';
     });
-
 }

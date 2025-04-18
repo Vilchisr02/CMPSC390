@@ -1,0 +1,140 @@
+CREATE TABLE `Added_to` (
+  `Quantity` int NOT NULL,
+  `Productid` int NOT NULL,
+  `Cartid` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Cart` (
+  `Cartid` int NOT NULL,
+  `Userid` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Includes` (
+  `Totalprice` int NOT NULL,
+  `Productid` int NOT NULL,
+  `Transactionid` int NOT NULL,
+  `Quantity` int NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Orders` (
+  `Transactionid` int NOT NULL,
+  `Status` varchar(20) NOT NULL,
+  `Orderdate` date NOT NULL,
+  `TotalPrice` decimal(10,2) NOT NULL,
+  `Userid` int NOT NULL,
+  `PaymentID` int NOT NULL,
+  `TotalQuantity` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `PaymentMethods` (
+  `PaymentID` int NOT NULL,
+  `Userid` int NOT NULL,
+  `CardNumber` varchar(16) NOT NULL,
+  `ExpirationDate` date NOT NULL,
+  `CVV` varchar(3) NOT NULL,
+  `CardholderName` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Product` (
+  `Productid` int NOT NULL,
+  `Price` int NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `Category` varchar(255) NOT NULL,
+  `Shipping` int NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `description` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Seller` (
+  `SellerID` int NOT NULL,
+  `StockQuantity` int NOT NULL,
+  `Price` int NOT NULL,
+  `Userid` int NOT NULL,
+  `Productid` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Users` (
+  `Userid` int NOT NULL,
+  `Fname` varchar(255) NOT NULL,
+  `Lname` varchar(255) NOT NULL,
+  `PhoneNumber` varchar(15) DEFAULT NULL,
+  `Address` text,
+  `Username` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE `Added_to`
+  ADD PRIMARY KEY (`Productid`,`Cartid`),
+  ADD KEY `Cartid` (`Cartid`);
+
+ALTER TABLE `Cart`
+  ADD PRIMARY KEY (`Cartid`),
+  ADD KEY `Userid` (`Userid`);
+
+ALTER TABLE `Includes`
+  ADD PRIMARY KEY (`Productid`,`Transactionid`),
+  ADD KEY `Transactionid` (`Transactionid`);
+
+ALTER TABLE `Orders`
+  ADD PRIMARY KEY (`Transactionid`),
+  ADD KEY `Userid` (`Userid`),
+  ADD KEY `PaymentID` (`PaymentID`);
+
+ALTER TABLE `PaymentMethods`
+  ADD PRIMARY KEY (`PaymentID`),
+  ADD KEY `Userid` (`Userid`);
+
+ALTER TABLE `Product`
+  ADD PRIMARY KEY (`Productid`);
+
+ALTER TABLE `Seller`
+  ADD PRIMARY KEY (`SellerID`),
+  ADD KEY `Userid` (`Userid`),
+  ADD KEY `Productid` (`Productid`);
+
+ALTER TABLE `Users`
+  ADD PRIMARY KEY (`Userid`),
+  ADD UNIQUE KEY `Username` (`Username`);
+
+ALTER TABLE `Cart`
+  MODIFY `Cartid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+ALTER TABLE `Orders`
+  MODIFY `Transactionid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+ALTER TABLE `PaymentMethods`
+  MODIFY `PaymentID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+ALTER TABLE `Product`
+  MODIFY `Productid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+ALTER TABLE `Seller`
+  MODIFY `SellerID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+ALTER TABLE `Users`
+  MODIFY `Userid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `Added_to`
+  ADD CONSTRAINT `Added_to_ibfk_1` FOREIGN KEY (`Productid`) REFERENCES `Product` (`Productid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Added_to_ibfk_2` FOREIGN KEY (`Cartid`) REFERENCES `Cart` (`Cartid`) ON DELETE CASCADE;
+
+ALTER TABLE `Cart`
+  ADD CONSTRAINT `Cart_ibfk_1` FOREIGN KEY (`Userid`) REFERENCES `Users` (`Userid`) ON DELETE CASCADE;
+
+ALTER TABLE `Includes`
+  ADD CONSTRAINT `Includes_ibfk_1` FOREIGN KEY (`Productid`) REFERENCES `Product` (`Productid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Includes_ibfk_2` FOREIGN KEY (`Transactionid`) REFERENCES `Orders` (`Transactionid`) ON DELETE CASCADE;
+
+ALTER TABLE `Orders`
+  ADD CONSTRAINT `Orders_ibfk_1` FOREIGN KEY (`Userid`) REFERENCES `Users` (`Userid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Orders_ibfk_2` FOREIGN KEY (`PaymentID`) REFERENCES `PaymentMethods` (`PaymentID`) ON DELETE CASCADE;
+
+ALTER TABLE `PaymentMethods`
+  ADD CONSTRAINT `PaymentMethods_ibfk_1` FOREIGN KEY (`Userid`) REFERENCES `Users` (`Userid`) ON DELETE CASCADE;
+
+ALTER TABLE `Seller`
+  ADD CONSTRAINT `Seller_ibfk_1` FOREIGN KEY (`Userid`) REFERENCES `Users` (`Userid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `Seller_ibfk_2` FOREIGN KEY (`Productid`) REFERENCES `Product` (`Productid`) ON DELETE CASCADE;
+COMMIT;

@@ -172,7 +172,8 @@ function fetchItems() {
                 image: `/uploads/${item.image}`, 
                 category: item.Category,
                 seller: item.sellerName,
-                description: item.description || "No description available"
+                description: item.description || "No description available",
+                stock: item.StockQuantity // Add stock quantity
             }));
             return items;
         } else {
@@ -232,8 +233,11 @@ function filterItemsByCategory(category) {
                 <h3>${item.name}</h3>
                 <p>Price: $${item.price.toFixed(2)}</p>
                 <p>Shipping: $${item.shipping.toFixed(2)}</p>
+                <p>Stock: ${item.stock}</p>
             </a>
-            <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+            <button class="add-to-cart" data-id="${item.id}" ${item.stock <= 0 ? 'disabled' : ''}>
+                ${item.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+            </button>
         `;
         itemContainer.appendChild(itemCard);
     });
@@ -242,7 +246,7 @@ function filterItemsByCategory(category) {
         if (e.target.classList.contains("add-to-cart")) {
             const itemId = e.target.getAttribute("data-id");
             const selectedItem = items.find(item => item.id === itemId);
-            if (selectedItem) addItemToCart(selectedItem);
+            if (selectedItem && selectedItem.stock > 0) addItemToCart(selectedItem);
         }
     });
 }
@@ -258,12 +262,34 @@ document.querySelectorAll(".category-btn").forEach(button => {
 
 // Add to Cart
 async function addItemToCart(item) {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ ...item, quantity: 1 });
+    // Refresh stock data first
+    const currentStock = await refreshItemStock(item.id);
+    
+    if (!currentStock || currentStock <= 0) {
+        alert("This item is out of stock!");
+        return;
     }
+    
+    if (currentStock <= 3) {
+        alert(`Only ${currentStock} left in stock!`);
+    }
+
+    const existingCartItem = cart.find(cartItem => cartItem.id === item.id);
+    
+    if (existingCartItem) {
+        if (existingCartItem.quantity >= currentStock) {
+            alert(`You can't add more than ${currentStock} of this item to your cart!`);
+            return;
+        }
+        existingCartItem.quantity += 1;
+    } else {
+        cart.push({ 
+            ...item, 
+            quantity: 1,
+            stock: currentStock
+        });
+    }
+    
     await saveCartToStorage();
     updateCartDisplay();
 }
@@ -280,10 +306,59 @@ async function removeItemFromCart(itemIndex) {
     updateCartDisplay();
 }
 
+async function refreshItemStock(itemId) {
+    try {
+        const response = await fetch('/listing/listings');
+        const data = await response.json();
+        if (data.products) {
+            const updatedItem = data.products.find(p => `item${p.Productid}` === itemId);
+            if (updatedItem) {
+                // Update both items array and cart
+                const itemIndex = items.findIndex(i => i.id === itemId);
+                if (itemIndex !== -1) {
+                    items[itemIndex].stock = updatedItem.StockQuantity;
+                }
+                
+                const cartItemIndex = cart.findIndex(i => i.id === itemId);
+                if (cartItemIndex !== -1) {
+                    cart[cartItemIndex].stock = updatedItem.StockQuantity;
+                }
+                
+                return updatedItem.StockQuantity;
+            }
+        }
+    } catch (error) {
+        console.error('Error refreshing item stock:', error);
+    }
+    return null;
+}
+
 // Update Cart Display
-function updateCartDisplay() {
+async function updateCartDisplay() {
     if (!cartItemsContainer) return;
 
+    // First validate all items against current stock
+    const updatedCart = [];
+    for (const item of cart) {
+        const currentStock = await refreshItemStock(item.id);
+        if (currentStock !== null) {
+            if (currentStock <= 0) {
+                continue; // Skip out-of-stock items
+            }
+            if (item.quantity > currentStock) {
+                item.quantity = currentStock; // Adjust to max available
+            }
+            updatedCart.push(item);
+        }
+    }
+
+    // Update cart if any changes were made
+    if (updatedCart.length !== cart.length) {
+        cart = updatedCart;
+        await saveCartToStorage();
+    }
+
+    // Now render the cart
     cartItemsContainer.innerHTML = "";
     let totalPrice = 0;
     let totalShipping = 0;
@@ -298,7 +373,12 @@ function updateCartDisplay() {
                 <p><strong>Category:</strong> ${item.category}</p>
                 <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> $${item.shipping.toFixed(2)}</p>
-                <p><strong>Quantity:</strong> ${item.quantity}</p>
+                <p><strong>Quantity:</strong> 
+                    <button class="quantity-btn minus" data-index="${index}">-</button>
+                    ${item.quantity}
+                    <button class="quantity-btn plus" data-index="${index}" ${item.quantity >= (item.stock || Infinity) ? 'disabled' : ''}>+</button>
+                    (Max: ${item.stock})
+                </p>
                 <button class="remove-item" data-index="${index}">Remove</button>
             </div>
         `;
@@ -313,13 +393,48 @@ function updateCartDisplay() {
         subtotalElement.textContent = `Subtotal: $${(totalPrice + totalShipping).toFixed(2)}`;
     }
 
-    const removeButtons = cartItemsContainer.querySelectorAll(".remove-item");
-    removeButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const itemIndex = parseInt(button.getAttribute("data-index"), 10);
-            removeItemFromCart(itemIndex);
+    // Add event listeners for quantity buttons
+    document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const index = parseInt(e.target.getAttribute('data-index'), 10);
+            adjustCartQuantity(index, -1);
         });
     });
+
+    document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const index = parseInt(e.target.getAttribute('data-index'), 10);
+            adjustCartQuantity(index, 1);
+        });
+    });
+
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const index = parseInt(e.target.getAttribute('data-index'), 10);
+            removeItemFromCart(index);
+        });
+    });
+}
+
+async function adjustCartQuantity(index, change) {
+    const item = cart[index];
+    const currentItem = items.find(i => i.id === item.id) || item;
+    
+    const newQuantity = item.quantity + change;
+    
+    if (newQuantity < 1) {
+        removeItemFromCart(index);
+        return;
+    }
+    
+    if (newQuantity > (currentItem.stock || Infinity)) {
+        alert(`You can't add more than ${currentItem.stock} of this item!`);
+        return;
+    }
+    
+    item.quantity = newQuantity;
+    await saveCartToStorage();
+    updateCartDisplay();
 }
 
 // Render Product Page
@@ -340,23 +455,42 @@ function renderProductPage() {
                 <p><strong>Shipping:</strong> $${selectedItem.shipping.toFixed(2)}</p>
                 <p><strong>Category:</strong> ${selectedItem.category}</p>
                 <p><strong>Seller:</strong> ${selectedItem.seller}</p>
+                <p><strong>In Stock:</strong> ${selectedItem.stock}</p>
                 <div class="product-description">
                     <h3>Description</h3>
                     <p>${selectedItem.description}</p>
                 </div>
-                <button id="buyNowBtn">Buy Now</button>
-                <button id="addToCartBtn">Add to Cart</button>
+                <button id="buyNowBtn" ${selectedItem.stock <= 0 ? 'disabled' : ''}>
+                    ${selectedItem.stock <= 0 ? 'Out of Stock' : 'Buy Now'}
+                </button>
+                <button id="addToCartBtn" ${selectedItem.stock <= 0 ? 'disabled' : ''}>
+                    ${selectedItem.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                </button>
             </div>
         `;
 
-        document.getElementById("addToCartBtn").addEventListener("click", () => {
-            addItemToCart(selectedItem);
-        });
+        if (selectedItem.stock > 0) {
+            document.getElementById("addToCartBtn").addEventListener("click", () => {
+                const currentItem = items.find(i => i.id === selectedItem.id);
+                if (currentItem.stock <= 0) {
+                    alert("This item is out of stock!");
+                    return;
+                }
+                
+                const existingCartItem = cart.find(item => item.id === selectedItem.id);
+                if (existingCartItem && existingCartItem.quantity >= currentItem.stock) {
+                    alert(`You can't add more than ${currentItem.stock} of this item to your cart!`);
+                    return;
+                }
+                
+                addItemToCart(selectedItem);
+            });
 
-        document.getElementById("buyNowBtn").addEventListener("click", () => {
-            localStorage.setItem("buyNowItem", JSON.stringify(selectedItem));
-            window.location.href = "checkout.html";
-        });
+            document.getElementById("buyNowBtn").addEventListener("click", () => {
+                localStorage.setItem("buyNowItem", JSON.stringify(selectedItem));
+                window.location.href = "checkout.html";
+            });
+        }
     } else if (productPage) {
         productPage.innerHTML = "<p>Product not found</p>";
     }
@@ -521,42 +655,67 @@ function renderCheckoutPage() {
                 const tax = subtotal * taxRate;
                 const total = subtotal + tax;
 
-                const response = await fetch('/orders/create', {
+                // First create the order
+                const orderResponse = await fetch('/orders/create', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        items: cart, 
+                        items: cart.map(item => ({
+                            id: item.id.replace('item', ''),
+                            quantity: item.quantity,
+                            price: item.price  // Make sure to include price per item
+                        })), 
                         subtotal,
                         tax,
                         total,
                         paymentId 
                     })
                 });
-                const data = await response.json();
-                if (response.ok) {
-                    // Show confirmation message
-                    const arrivalDate = getExpectedArrivalDate();
-                    orderConfirmationMessage.textContent = `Order Confirmed! Order ID: ${data.orderId}. Expected Arrival: ${arrivalDate}`;
-                    orderConfirmationPopup.classList.add("show");
-
-                    // Clear cart
-                    cart.length = 0;
-                    await saveCartToStorage();
-
-                    // Redirect to account page after a delay
-                    setTimeout(() => {
-                        orderConfirmationPopup.classList.remove("show");
-                        window.location.href = "account.html";
-                    }, 3000);
-                } else {
-                    alert(data.message || "Failed to create order");
+                
+                const orderData = await orderResponse.json();
+                if (!orderResponse.ok) {
+                    throw new Error(orderData.message || "Failed to create order");
                 }
+
+                // Then update stock quantities
+                const stockResponse = await fetch('/listing/update-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        items: cart.map(item => ({
+                            id: item.id.replace('item', ''),
+                            quantity: item.quantity
+                        }))
+                    })
+                });
+                
+                if (!stockResponse.ok) {
+                    throw new Error("Failed to update stock");
+                }
+
+                // Show confirmation message
+                const arrivalDate = getExpectedArrivalDate();
+                orderConfirmationMessage.textContent = `Order Confirmed! Order ID: ${orderData.orderId}. Expected Arrival: ${arrivalDate}`;
+                orderConfirmationPopup.classList.add("show");
+
+                // Clear cart
+                cart.length = 0;
+                await saveCartToStorage();
+
+                // Redirect to account page after a delay
+                setTimeout(() => {
+                    orderConfirmationPopup.classList.remove("show");
+                    window.location.href = "account.html";
+                }, 3000);
             } catch (error) {
                 console.error('Error creating order:', error);
-                alert("Failed to create order");
+                alert(error.message || "Failed to create order");
             }
         });
     }

@@ -166,3 +166,42 @@
     overflow-y: auto;
     padding-right: 10px;
 }
+
+.order-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.status-processing {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-shipped {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.status-delivered {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.status-default {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.order-item-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.order-item-product img {
+    border-radius: 4px;
+}

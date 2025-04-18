@@ -33,25 +33,30 @@ router.use(bodyParser.json());
 
 // Create a new order
 router.post('/create', authenticateToken, async (req, res) => {
-    const { items, total, paymentId } = req.body;
+    const { items, subtotal, tax, total, paymentId } = req.body;
     const userId = req.user.userId;
 
     try {
         await promisePool.query('START TRANSACTION');
 
+        // Calculate total quantity
+        const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+
         const [orderResult] = await promisePool.query(
-            'INSERT INTO Orders (Status, Orderdate, TotalPrice, Userid, PaymentID) VALUES (?, NOW(), ?, ?, ?)',
-            ['Processing', total, userId, paymentId]
+            'INSERT INTO Orders (Status, Orderdate, TotalPrice, Userid, PaymentID, TotalQuantity) VALUES (?, NOW(), ?, ?, ?, ?)',
+            ['Processing', total, userId, paymentId, totalQuantity]
         );
 
         const transactionId = orderResult.insertId;
 
-        // Add items to Includes table
+        // Add items to Includes table with quantities
         for (const item of items) {
-            const productId = item.id.replace('item', ''); // Remove 'item' prefix
+            const productId = item.id.replace('item', '');
+            const itemTotal = item.price * item.quantity;
+            
             await promisePool.query(
-                'INSERT INTO Includes (Totalprice, Productid, Transactionid) VALUES (?, ?, ?)',
-                [total, productId, transactionId]
+                'INSERT INTO Includes (Totalprice, Productid, Transactionid, Quantity) VALUES (?, ?, ?, ?)',
+                [itemTotal, productId, transactionId, item.quantity]
             );
         }
 
@@ -67,19 +72,18 @@ router.post('/create', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Error creating order' });
     }
 });
-
 // Get user's orders
 router.get('/user', authenticateToken, async (req, res) => {
     const userId = req.user.userId;
 
     try {
-        // Get orders with payment method details
         const [orders] = await promisePool.query(`
             SELECT 
                 o.Transactionid, 
                 o.Status, 
                 o.Orderdate, 
                 CAST(o.TotalPrice AS DECIMAL(10,2)) AS TotalPrice,
+                o.TotalQuantity,
                 p.CardholderName, 
                 p.CardNumber
             FROM Orders o
@@ -88,10 +92,15 @@ router.get('/user', authenticateToken, async (req, res) => {
             ORDER BY o.Orderdate DESC
         `, [userId]);
 
-        // For each order, get the items
         for (const order of orders) {
             const [items] = await promisePool.query(`
-                SELECT i.Productid, p.Name, p.Price, p.image, i.Totalprice
+                SELECT 
+                    i.Productid, 
+                    p.Name, 
+                    p.Price, 
+                    p.image, 
+                    i.Totalprice,
+                    i.Quantity
                 FROM Includes i
                 JOIN Product p ON i.Productid = p.Productid
                 WHERE i.Transactionid = ?
@@ -102,7 +111,8 @@ router.get('/user', authenticateToken, async (req, res) => {
                 name: item.Name,
                 price: item.Price,
                 image: `/uploads/${item.image}`,
-                total: item.Totalprice
+                total: item.Totalprice,
+                quantity: item.Quantity
             }));
         }
 
@@ -112,4 +122,70 @@ router.get('/user', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Error fetching orders' });
     }
 });
+
+// Function to update order statuses
+async function updateOrderStatuses() {
+    try {
+        // First update Processing -> Shipped
+        const [processingOrders] = await promisePool.query(
+            'SELECT Transactionid FROM Orders WHERE Status = ?',
+            ['Processing']
+        );
+
+        if (processingOrders.length > 0) {
+            await promisePool.query(
+                'UPDATE Orders SET Status = ? WHERE Status = ?',
+                ['Shipped', 'Processing']
+            );
+        }
+
+        // Then update Shipped -> Delivered
+        const [shippedOrders] = await promisePool.query(
+            'SELECT Transactionid FROM Orders WHERE Status = ?',
+            ['Shipped']
+        );
+
+        if (shippedOrders.length > 0) {
+            await promisePool.query(
+                'UPDATE Orders SET Status = ? WHERE Status = ?',
+                ['Delivered', 'Shipped']
+            );
+        }
+    } catch (error) {
+        console.error('Error updating order statuses:', error);
+    }
+}
+
+// Update statuses every 30 seconds, but stagger the updates
+setInterval(async () => {
+    // First update Processing -> Shipped
+    await updateStatus('Processing', 'Shipped');
+    
+    // Wait 30 seconds before Shipped -> Delivered
+    setTimeout(async () => {
+        await updateStatus('Shipped', 'Delivered');
+    }, 30000);
+}, 60000); // Full cycle every 60 seconds
+
+async function updateStatus(fromStatus, toStatus) {
+    try {
+        const [orders] = await promisePool.query(
+            'SELECT Transactionid FROM Orders WHERE Status = ?',
+            [fromStatus]
+        );
+
+        if (orders.length > 0) {
+            await promisePool.query(
+                'UPDATE Orders SET Status = ? WHERE Status = ?',
+                [toStatus, fromStatus]
+            );
+        }
+    } catch (error) {
+        console.error(`Error updating status from ${fromStatus} to ${toStatus}:`, error);
+    }
+}
+
+// Call it once when starting the server
+updateOrderStatuses();
+
 module.exports = router;
