@@ -205,3 +205,22 @@
 .order-item-product img {
     border-radius: 4px;
 }
+
+.listing-item .status {
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.listing-item .status.out-of-stock {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.listing-item .status {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
