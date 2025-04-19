@@ -130,7 +130,13 @@ router.get('/listings/user', authenticateToken, async (req, res) => {
 
     try {
         const [listings] = await promisePool.query(`
-            SELECT Product.*, Seller.StockQuantity
+            SELECT 
+                Product.*, 
+                Seller.StockQuantity,
+                CASE 
+                    WHEN Seller.StockQuantity <= 0 THEN 'Out of Stock'
+                    ELSE 'Active'
+                END AS status
             FROM Product 
             JOIN Seller ON Product.Productid = Seller.Productid 
             WHERE Seller.Userid = ?
