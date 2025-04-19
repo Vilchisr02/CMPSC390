@@ -158,6 +158,10 @@ if (window.location.pathname.includes("account.html")) {
                 data.listings.forEach(listing => {
                     const listingElement = document.createElement('div');
                     listingElement.className = 'listing-item';
+                    
+                    // Add out-of-stock class if needed
+                    const statusClass = listing.status === 'Out of Stock' ? 'out-of-stock' : '';
+                    
                     listingElement.innerHTML = `
                         <div class="listing-image">
                             <img src="/uploads/${listing.image}" alt="${listing.Name}">
@@ -167,7 +171,8 @@ if (window.location.pathname.includes("account.html")) {
                             <p>Price: $${listing.Price}</p>
                             <p>Category: ${listing.Category}</p>
                             <p>Shipping: $${listing.Shipping}</p>
-                            <p>Status: ${'Active'}</p>     
+                            <p class="status ${statusClass}">Status: ${listing.status}</p>
+                            <p>Stock: ${listing.StockQuantity}</p>
                             <p>Date Listed: ${new Date(listing.created_at).toLocaleString()}</p>
                         </div>
                     `;
