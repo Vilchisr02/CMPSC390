@@ -60,8 +60,6 @@ document.querySelector('.sign-up-form').addEventListener('submit', async (e) => 
     const userData = {
         firstName: document.getElementById('firstName').value,
         lastName: document.getElementById('lastName').value,
-        phoneNumber: document.getElementById('phoneNumber').value,
-        address: document.getElementById('address').value,
         username: document.getElementById('usernameSignUp').value,
         email: document.getElementById('email').value,
         password: password,
