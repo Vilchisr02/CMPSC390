@@ -598,21 +598,34 @@ function renderCheckoutPage() {
         `;
     }
     
-    const userData = localStorage.getItem('user');
-    if (userData) {
-        const user = JSON.parse(userData);
-        const shipToName = document.getElementById('shipToName');
-        const shipToAddress = document.getElementById('shipToAddress');
-        
-        if (shipToName) {
-            shipToName.textContent = `${user.Fname || ''} ${user.Lname || ''}`.trim() || 'Not provided';
-        }
-        
-        if (shipToAddress) {
-            shipToAddress.textContent = user.Address || 'Not provided';
-        }
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        fetch('/auth/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                const user = data.user;
+                const shipToName = document.getElementById('shipToName');
+                const shipToAddress = document.getElementById('shipToAddress');
+                
+                if (shipToName) {
+                    shipToName.textContent = `${user.Fname || ''} ${user.Lname || ''}`.trim();
+                }
+                
+                if (shipToAddress) {
+                    shipToAddress.textContent = user.Address || 'Not provided';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
     } else {
-        // If no user is logged in, show a message
         const shipToName = document.getElementById('shipToName');
         const shipToAddress = document.getElementById('shipToAddress');
         
@@ -626,11 +639,18 @@ function renderCheckoutPage() {
         arrivalDate.setDate(today.getDate() + 7);
         return arrivalDate.toLocaleDateString();
     }
-
+    
    if (confirmOrderBtn) {
         confirmOrderBtn.addEventListener("click", async () => {
             if (cart.length === 0) {
                 alert("Your cart is empty. Add items before confirming your order.");
+                return;
+            }
+            
+            const shipToAddress = document.getElementById('shipToAddress');
+            if (shipToAddress && shipToAddress.textContent === 'Not provided') {
+                alert("Please add a shipping address in your account before checking out.");
+                window.location.href = "account.html";
                 return;
             }
 

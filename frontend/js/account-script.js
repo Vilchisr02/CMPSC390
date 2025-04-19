@@ -42,6 +42,94 @@ if (window.location.pathname.includes("account.html")) {
         });
     });
     
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const editProfilePopup = document.getElementById('editProfilePopup');
+    const editProfileForm = document.getElementById('editProfileForm');
+
+    // Edit Profile Button Event Listener
+    editProfileBtn.addEventListener('click', async () => {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+            alert('Please sign in to edit your profile');
+            return;
+        }
+
+        try {
+            const response = await fetch('/auth/user', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('editPhone').value = data.user.PhoneNumber || '';
+                document.getElementById('editAddress').value = data.user.Address || '';
+                showPopup(editProfilePopup);
+            } else {
+                alert(data.message || 'Failed to load user details');
+            }
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            alert('Error loading user details');
+        }
+    });
+
+    // Form submission handler
+    editProfileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const phone = document.getElementById('editPhone').value;
+        const address = document.getElementById('editAddress').value;
+        const token = localStorage.getItem('authToken');
+
+        try {
+            const response = await fetch('/auth/user/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ phone, address })
+            });
+
+            if (response.ok) {
+                alert('Profile updated successfully');
+                hidePopup(editProfilePopup);
+                
+                // Force refresh the user data
+                const userResponse = await fetch('/auth/user', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const userData = await userResponse.json();
+                localStorage.setItem('user', JSON.stringify(userData.user));
+                
+                // Refresh the displayed info
+                document.dispatchEvent(new Event('profileUpdated'));
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to update profile');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Error updating profile');
+        }
+    });
+
+    // Popup close handlers
+    editProfilePopup.addEventListener("click", (e) => {
+        if (e.target === editProfilePopup) hidePopup(editProfilePopup);
+    });
+
+    editProfilePopup.querySelector('.popup-close').addEventListener('click', () => {
+        hidePopup(editProfilePopup);
+    });
+
+    
     document.querySelector('#setupPaymentPopup form').addEventListener('submit', async (e) => {
         e.preventDefault();
 

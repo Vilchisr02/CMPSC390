@@ -28,7 +28,7 @@ const JWT_SECRET = 'your-secret-key';
 
 // Sign-up route
 router.post('/signup', async (req, res) => {
-    const { firstName, lastName, phoneNumber, address, username, email, password } = req.body;
+    const { firstName, lastName, username, email, password } = req.body;
 
     // Validate input
     if (!firstName || !lastName || !username || !email || !password) {
@@ -51,8 +51,8 @@ router.post('/signup', async (req, res) => {
 
         // Insert the new user into the database
         const [result] = await promisePool.query(
-            'INSERT INTO Users (Fname, Lname, PhoneNumber, Address, Username, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [firstName, lastName, phoneNumber, address, username, email, hashedPassword]
+            'INSERT INTO Users (Fname, Lname, Username, Email, Password) VALUES (?, ?, ?, ?, ?)',
+            [firstName, lastName, username, email, hashedPassword]
         );
 
         // Fetch the newly created user data
@@ -110,6 +110,56 @@ router.post('/signin', async (req, res) => {
         res.status(200).json({ message: 'Login successful', user: userData, token });
     } catch (error) {
         console.error('Error during signin:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get user details
+router.get('/user', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Authorization token required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const [users] = await promisePool.query(
+            'SELECT Userid, Fname, Lname, Username, Email, PhoneNumber, Address FROM Users WHERE Userid = ?', 
+            [decoded.userId]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ user: users[0] });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update user details (phone and address)
+router.put('/user/update', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    const { phone, address } = req.body;
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Authorization token required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        await promisePool.query(
+            'UPDATE Users SET PhoneNumber = ?, Address = ? WHERE Userid = ?',
+            [phone, address, decoded.userId]
+        );
+
+        res.status(200).json({ message: 'User details updated successfully' });
+    } catch (error) {
+        console.error('Error updating user details:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

@@ -62,13 +62,14 @@
         <section class="section-account">
             <div class="account-details">
                 <div class="user-info">
-                    <p><strong>First Name:</strong> John</p>
-                    <p><strong>Last Name:</strong> Doe</p>
-                    <p><strong>Username:</strong> jDoe01</p>
-                    <p><strong>Email:</strong> johndoe@example.com</p>
-                    <p><strong>Address:</strong> 1234 Elm Street, Springfield, IL 62701</p>
-                    <p><strong>Phone Number:</strong> 1234567890 </p>
+                    <p><strong>First Name:</strong> N/A</p>
+                    <p><strong>Last Name:</strong> N/A</p>
+                    <p><strong>Username:</strong> N/A</p>
+                    <p><strong>Email:</strong> N/A</p>
+                    <p><strong>Address:</strong> N/A</p>
+                    <p><strong>Phone Number:</strong> N/A</p>
                 </div>
+                <button type="button" class="account-btn" id="editProfileBtn">Edit Profile</button>
                 <button type="button" class="account-btn" id="setupPaymentBtn">Set Up Payment Method</button>
                 <button type="button" class="account-btn" id="viewPaymentBtn">View Payment Methods</button>
                 <button type="button" class="list-item-btn">List an Item</button>
@@ -90,8 +91,6 @@
                 <input type="text" id="firstName" name="firstName" class="sign-up-input">
                 <label for="lastName">Last Name</label>
                 <input type="text" id="lastName" name="lastName" class="sign-up-input">
-                <label for="phoneNumber">Phone Number</label>
-                <input type="tel" id="phoneNumber" name="phoneNumber" class="sign-up-input">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="sign-up-input">
                 <label for="password">Password</label>
@@ -144,6 +143,24 @@
     </div>
 
     <!-- Account Pop-ups -->
+    <div id="editProfilePopup" class="popup">
+      <div class="popup-content">
+          <h2>Edit Profile</h2>
+          <form id="editProfileForm">
+              <div class="form-group">
+                  <label for="editPhone">Phone Number</label>
+                  <input type="tel" id="editPhone" placeholder="Enter your phone number">
+              </div>
+              <div class="form-group">
+                  <label for="editAddress">Address</label>
+                  <textarea id="editAddress" placeholder="Enter your address"></textarea>
+              </div>
+              <button type="submit" class="popup-btn">Save Changes</button>
+          </form>
+          <button type="button" class="popup-close">X</button>
+      </div>
+  </div>
+
     <div id="setupPaymentPopup" class="popup">
         <div class="popup-content">
             <h2>Set Up Your Payment Method</h2>
