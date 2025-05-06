@@ -3,7 +3,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // Import JWT
+const jwt = require('jsonwebtoken'); 
 const router = express.Router();
 
 
@@ -55,15 +55,15 @@ router.post('/signup', async (req, res) => {
             [firstName, lastName, phoneNumber, address, username, email, hashedPassword]
         );
 
-        // Fetch the newly created user data
+
         const [newUser] = await promisePool.query(
             'SELECT * FROM Users WHERE Userid = ?', [result.insertId]
         );
 
-        // Exclude the password from the user data
+
         const { password: _, ...userData } = newUser[0];
 
-        // Generate a JWT token
+
         const token = jwt.sign({ userId: userData.Userid, username: userData.Username }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(201).json({ message: 'User created successfully', user: userData, token });
@@ -73,17 +73,17 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-// Sign-in route
+
 router.post('/signin', async (req, res) => {
     const { username, password } = req.body;
 
-    // Validate input
+
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
     }
 
     try {
-        // Find the user in the database
+     
         const [users] = await promisePool.query(
             'SELECT * FROM Users WHERE Username = ?', [username]
         );
@@ -94,7 +94,7 @@ router.post('/signin', async (req, res) => {
 
         const user = users[0];
 
-        // Compare the provided password with the hashed password in the database
+       
         const isPasswordValid = await bcrypt.compare(password, user.Password || user.password);
 
         if (!isPasswordValid) {
@@ -107,10 +107,10 @@ router.post('/signin', async (req, res) => {
 };
 
 
-        // Return user data (excluding password) upon successful login
+        
         const { password: _, ...userData } = user;
 
-        // Generate a JWT token
+       
         const token = jwt.sign({ userId: user.Userid, username: user.Username }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'Login successful', user: userData, token });
