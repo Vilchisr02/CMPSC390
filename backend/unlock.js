@@ -25,7 +25,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Check if user has seller status (has posted any products)
+
 router.get('/check-seller-status', authenticateToken, async (req, res) => {
     const userId = req.user.userId;
 
