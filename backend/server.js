@@ -12,14 +12,14 @@ const app = express();
 const PORT = 3000;
 
 app.use(session({
-    secret: 'your-secret-key', // use something secure in real apps
+    secret: 'your-secret-key', 
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
 }));
 
 
-// Middleware to parse JSON bodies
+
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../frontend')));
