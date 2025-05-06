@@ -1,4 +1,4 @@
-// Check if the current page is account.html
+
 if (window.location.pathname.includes("account.html")) {
 
     function formatPhoneNumber(phoneNumber) {
@@ -62,7 +62,7 @@ viewOrdersBtn.addEventListener('click', () => {
             });
         }
 
-        // ✅ OPEN the popup (this was missing!)
+
         document.getElementById('viewOrdersPopup').classList.add('active');
     })
     .catch(err => {
@@ -72,7 +72,7 @@ viewOrdersBtn.addEventListener('click', () => {
 });
 
 
-    // One unified DOMContentLoaded
+
     document.addEventListener('DOMContentLoaded', () => {
         displayUserInfo();
         setupOrderPopup();
