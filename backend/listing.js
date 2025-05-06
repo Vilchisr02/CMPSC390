@@ -6,7 +6,7 @@ const multer = require('multer');
 const path = require('path');
 
 
-// Database connection
+
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 });
 const promisePool = pool.promise();
 
-// JWT Authentication Middleware
+
 const JWT_SECRET = 'your-secret-key';
 
 const authenticateToken = (req, res, next) => {
@@ -30,14 +30,14 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Multer setup for file uploads
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')), // ✅ Correct path
+  destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 });
 const upload = multer({ storage });
 
-// Modified Route to handle image upload
+
 router.post('/listings', authenticateToken, upload.single('productImage'), async (req, res) => {
     const { itemName, itemPrice, itemCategory, shippingCost } = req.body;
     const userId = req.user.userId;
@@ -69,7 +69,7 @@ router.post('/listings', authenticateToken, upload.single('productImage'), async
 
 router.get('/listings', async (req, res) => {
     try {
-        // Fetch all products from the Product table
+
         const [products] = await promisePool.query('SELECT * FROM Product');
         res.status(200).json({ products });
     } catch (error) {
