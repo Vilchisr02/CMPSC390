@@ -124,7 +124,7 @@ router.get('/', authenticateToken, async (req, res) => {
             shipping: item.Shipping,
             image: `/uploads/${item.image}`,
             category: item.Category,
-            quantity: item.Quantity // Use the actual quantity from database
+            quantity: item.Quantity 
         }));
 
         res.status(200).json({ items: formattedItems });
