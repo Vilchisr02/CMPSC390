@@ -1,4 +1,4 @@
-// backend/auth.js
+
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -6,37 +6,37 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // Import JWT
 const router = express.Router();
 
-// Middleware to parse JSON bodies
+
 router.use(bodyParser.json());
 
-// Create a MySQL connection pool
+
 const pool = mysql.createPool({
     host: 'localhost',
-    user: 'root', // Replace with your MySQL username
-    password: 'YOURPASSWORD', // Replace with your MySQL password
-    database: 'eCommerceDB', // Replace with your database name
+    user: 'root',
+    password: 'YOURPASSWORD',
+    database: 'eCommerceDB', 
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-// Promisify the pool for async/await usage
+
 const promisePool = pool.promise();
 
-// Secret key for JWT (should be stored in environment variables in production)
+
 const JWT_SECRET = 'your-secret-key';
 
-// Sign-up route
+
 router.post('/signup', async (req, res) => {
     const { firstName, lastName, phoneNumber, address, username, email, password } = req.body;
 
-    // Validate input
+  
     if (!firstName || !lastName || !username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
     try {
-        // Check if the user already exists
+       
         const [existingUser] = await promisePool.query(
             'SELECT * FROM Users WHERE Username = ? OR Email = ?',
             [username, email]
@@ -46,10 +46,10 @@ router.post('/signup', async (req, res) => {
             return res.status(409).json({ message: 'Username or email already exists' });
         }
 
-        // Hash the password
+       
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert the new user into the database
+       
         const [result] = await promisePool.query(
             'INSERT INTO Users (Fname, Lname, PhoneNumber, Address, Username, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [firstName, lastName, phoneNumber, address, username, email, hashedPassword]
