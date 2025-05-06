@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'BdIaP1!!',
+    password: 'Password',
     database: 'eCommerceDB',
     waitForConnections: true,
     connectionLimit: 10,
