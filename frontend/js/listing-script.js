@@ -1,4 +1,4 @@
-// Listing Feature
+
 if (window.location.pathname.includes("listing.html")) {
     const postListingBtn = document.querySelector('.post-listing-btn');
     const closePopupBtn = document.querySelector('.close-popup-btn');
@@ -37,19 +37,18 @@ if (window.location.pathname.includes("listing.html")) {
     const productImage = document.getElementById('productImage');
     const token = localStorage.getItem('authToken');
 
-    // Check if fields and image are provided
     if (!itemName || isNaN(itemPrice) || !itemCategory || isNaN(shippingCost) || !selectedShippingMethod) {
         alert("Please fill in all fields correctly!");
         return;
     }
 
-    // Specifically check if file selected
+
     if (!productImage.files || productImage.files.length === 0) {
         alert("Please select an image for your product!");
         return;
     }
 
-    // Create FormData for upload
+
     const formData = new FormData();
     formData.append('itemName', itemName);
     formData.append('itemPrice', itemPrice);
