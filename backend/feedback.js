@@ -41,7 +41,7 @@ router.post('/', authenticateToken, upload.single('image'), async (req, res) => 
     const userId = req.user?.userId;
     const imageFileName = req.file ? `/uploads/feedback/${req.file.filename}` : null;
 
-    // Validation
+
     if (!rating || !comment) {
         return res.status(400).json({ message: 'Rating and comment are required' });
     }
@@ -65,7 +65,7 @@ router.post('/', authenticateToken, upload.single('image'), async (req, res) => 
             return res.status(500).json({ message: 'Error fetching user details' });
         }
     } else {
-        // Guest validation
+
         if (!email || !username) {
             return res.status(400).json({ message: 'Name and email are required for guests' });
         }
