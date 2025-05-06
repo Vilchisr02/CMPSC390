@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql2');
 
-// Set up MySQL connection pool
+
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-// 🔁 Update order status
+
 router.post('/update-order-status', async (req, res) => {
     const { order_id, status } = req.body;
 
@@ -28,7 +28,7 @@ router.post('/update-order-status', async (req, res) => {
     }
 });
 
-// 📥 Get orders for a user
+
 router.get('/get-user-orders', async (req, res) => {
     if (!req.session.user || !req.session.user.id) {
         return res.status(401).json({ success: false, message: 'Not logged in' });
