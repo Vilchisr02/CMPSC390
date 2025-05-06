@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seller Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+  <link rel="stylesheet" href="css/seller-dashboard.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo">MarketShift</div>
+      <h2>Dashboard</h2>
+      <nav>
+        <a href="/" id="homeBtn">🏠 Home</a>
+        <a href="#" id="btn-orders">📦 Orders</a>
+        <a href="#" id="btn-products">🛒 Products</a>
+        <a href="#" id="btn-reviews">👥 Customers</a>
+      </nav>
+      <button id="toggle-dark">Toggle Dark Mode</button>
+    </aside>
+
+    <main class="main-content">
+      <h1 id="seller-welcome">Welcome, Seller!</h1>
+
+      <section class="card">
+        <h2>Your Earnings</h2>
+        <p>Total Earnings: <span id="earnings-amount">$0.00</span></p>
+        <p>Total Deductions: <span id="deductions-amount">$0.00</span></p>
+        <div style="max-width: 400px; margin-top: 20px;">
+          <canvas id="earningsChart"></canvas>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>📊 Weekly Orders</h2>
+        <div style="max-width: 600px; height: 350px; margin-top: 20px;">
+          <canvas id="weeklyOrdersChart" width="600" height="350"></canvas>
+        </div>
+      </section>
+
+      <section id="orders-section" class="card" style="display: none;">
+        <h2>📦 Orders</h2>
+        <div id="orders-list"></div>
+      </section>
+
+      <section id="products-section" class="card" style="display: none;">
+        <h2>🛒 Products</h2>
+        <div id="products-list"></div>
+      </section>
+
+      <section id="customers-section" class="card" style="display: none;">
+        <h2>👥 Customer Reviews</h2>
+        <div id="customers-list"></div>
+      </section>
+    </main>
+  </div>
+  <script src="js/seller-dashboard.js"></script>
+</body>
+</html>
+

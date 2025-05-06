@@ -1,0 +1,177 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.feedback-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+.feedback-box h1 a {
+  text-decoration: none;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.user-email-display {
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    margin-top: 5px;
+    display: none;
+}
+
+.verified-badge {
+    background: #4CAF50;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.feedback-item .verified-badge {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.email-input {
+    display: block;
+    width: 100%;
+}
+
+.guest-badge {
+    background: #757575;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.feedback-user {
+    font-weight: bold;
+}
+
+.feedback-item { 
+    margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px; 
+}
+.feedback-image { 
+    max-width: 200px; max-height: 150px; display: block; margin-top: 10px; 
+}
+ .file-input {
+     margin: 10px 0; 
+}
+.rating-stars {
+    font-size: 32px;
+    color: #ccc;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.rating-stars .star {
+    display: inline-block;
+    padding: 0 5px;
+    transition: color 0.2s;
+}
+
+.rating-stars .star.active {
+    color: #f39c12;
+}
+
+.submit-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+}
+
+
+.thank-you {
+    text-align: center;
+    padding: 30px;
+    background-color: #e8f4fc;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #3498db;
+    display: none;
+}
+.footer {
+    text-align: center;
+    color: white;
+    padding: 1rem;
+    background-color: #2c3e50;
+    width: 100%;
+}
