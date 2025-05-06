@@ -50,34 +50,34 @@ if (window.location.pathname.includes("account.html")) {
         const cvv = document.getElementById('cardCVV').value;
         const cardholderName = document.getElementById('cardName').value;
 
-        const token = localStorage.getItem('authToken'); // Retrieve the JWT token from local storage
+        const token = localStorage.getItem('authToken'); 
 
         try {
-            // Fetch existing payment methods for the user
+
             const response = await fetch('/payment/view-payments', {
                 method: 'GET',
                 headers: {
-                    'Authorization': token // Send the JWT token in the Authorization header
+                    'Authorization': token 
                 }
             });
 
             const data = await response.json();
             if (response.ok) {
-                // Check if the payment method already exists
+    
                 const paymentMethods = data.paymentMethods;
                 const isDuplicate = paymentMethods.some(method => method.CardNumber === cardNumber);
 
                 if (isDuplicate) {
                     alert('This payment method already exists.');
-                    return; // Stop further execution
+                    return; 
                 }
 
-                // If not a duplicate, proceed to save the payment method
+           
                 const saveResponse = await fetch('/payment/save-payment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': token // Send the JWT token in the Authorization header
+                        'Authorization': token 
                     },
                     body: JSON.stringify({ cardNumber, expirationDate, cvv, cardholderName })
                 });
@@ -85,7 +85,7 @@ if (window.location.pathname.includes("account.html")) {
                 const saveData = await saveResponse.json();
                 if (saveResponse.ok) {
                     alert('Payment method saved successfully');
-                    hidePopup(setupPaymentPopup); // Close the pop-up after successful save
+                    hidePopup(setupPaymentPopup); 
                 } else {
                     alert(saveData.message);
                 }
@@ -98,19 +98,19 @@ if (window.location.pathname.includes("account.html")) {
     });
 
     document.getElementById('viewPaymentBtn').addEventListener('click', async () => {
-        const token = localStorage.getItem('authToken'); // Retrieve the JWT token from local storage
+        const token = localStorage.getItem('authToken');
 
         try {
             const response = await fetch('/payment/view-payments', {
                 method: 'GET',
                 headers: {
-                    'Authorization': token // Send the JWT token in the Authorization header
+                    'Authorization': token
                 }
             });
 
             const data = await response.json();
             if (response.ok) {
-                // Display payment methods in the popup
+                
                 const paymentMethods = data.paymentMethods;
                 const paymentMethodsContainer = document.getElementById('paymentMethodsContainer');
                 paymentMethodsContainer.innerHTML = paymentMethods.map(method => `
@@ -130,7 +130,7 @@ if (window.location.pathname.includes("account.html")) {
         }
     });
 
-    // View Orders Feature
+    
     const viewOrdersBtn = document.createElement("button");
     viewOrdersBtn.textContent = "View Orders";
     viewOrdersBtn.classList.add("account-btn");
